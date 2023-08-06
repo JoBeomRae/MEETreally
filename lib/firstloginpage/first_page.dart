@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:meet/addpage/add.dart';
+import 'package:meet/addpage/add.dart'; // 여기에 경로를 정확하게 맞춰주세요.
 
 class FirstPage extends StatefulWidget {
-  const FirstPage({Key? key}) : super(key: key);
+  final String? city;
+  final String? district;
+  final String? people;
+
+  const FirstPage({this.city, this.district, this.people, Key? key})
+      : super(key: key);
 
   @override
   FirstPageState createState() => FirstPageState();
@@ -22,26 +27,27 @@ class FirstPageState extends State<FirstPage> {
     // 각 탭에 대응하는 위젯 리스트
     final List<Widget> widgetOptions = <Widget>[
       Center(
-        child: ElevatedButton(
-          // '등록하기' 버튼
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const AddPage()),
-            );
-          },
-          style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all<Color>(
-                Colors.white), // 버튼의 배경색을 흰색으로 설정
-            foregroundColor: MaterialStateProperty.all<Color>(
-                Colors.black), // 버튼의 텍스트 색상을 검은색으로 설정
-          ),
-          child: const Text('등록하기'),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('시: ${widget.city ?? ''}'),
+            Text('구: ${widget.district ?? ''}'),
+            Text('인원: ${widget.people ?? ''}'),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const AddPage()),
+                );
+              },
+              child: const Text('등록하기'),
+            ),
+          ],
         ),
       ),
-      Container(), // 빈 위젯
-      Container(), // 빈 위젯
-      Container(), // 빈 위젯
+      Container(),
+      Container(),
+      Container(),
     ];
     return Scaffold(
       appBar: AppBar(

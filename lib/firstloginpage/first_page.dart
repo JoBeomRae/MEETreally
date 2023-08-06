@@ -30,9 +30,10 @@ class FirstPageState extends State<FirstPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('시: ${widget.city ?? ''}'),
-            Text('구: ${widget.district ?? ''}'),
-            Text('인원: ${widget.people ?? ''}'),
+            if (widget.city != null) Text('시: ${widget.city}'),
+            if (widget.district != null) Text('구: ${widget.district}'),
+            if (widget.people != null) Text('인원: ${widget.people}'),
+            const SizedBox(height: 20), // 버튼을 조금 아래로 이동시킵니다.
             ElevatedButton(
               onPressed: () {
                 Navigator.push(

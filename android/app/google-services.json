@@ -29,6 +29,13 @@
             {
               "client_id": "486814867638-i2gs8rb8dcre1hal9s77fbfhrsgu3dqd.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "486814867638-fm0ml15bt96vi1k2ees7qgp5t667b234.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.meet"
+              }
             }
           ]
         }

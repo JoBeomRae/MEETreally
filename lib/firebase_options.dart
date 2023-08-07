@@ -21,11 +21,20 @@ class DefaultFirebaseOptions {
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
-        return android;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for android - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.iOS:
-        return ios;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for ios - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -51,33 +60,5 @@ class DefaultFirebaseOptions {
     authDomain: 'asdasf-b2f36.firebaseapp.com',
     storageBucket: 'asdasf-b2f36.appspot.com',
     measurementId: 'G-PP8GHGBQB5',
-  );
-
-  static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyC0y9zXC-pzJ1ZBdayz4rhaocT3rZKDkQk',
-    appId: '1:486814867638:android:c5d02b65fa36c601ab4617',
-    messagingSenderId: '486814867638',
-    projectId: 'asdasf-b2f36',
-    storageBucket: 'asdasf-b2f36.appspot.com',
-  );
-
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBSSFab1MQkRtSqd-z9SMem2yoPCK-ZxjI',
-    appId: '1:486814867638:ios:16069f456a40b8a2ab4617',
-    messagingSenderId: '486814867638',
-    projectId: 'asdasf-b2f36',
-    storageBucket: 'asdasf-b2f36.appspot.com',
-    iosClientId: '486814867638-fm0ml15bt96vi1k2ees7qgp5t667b234.apps.googleusercontent.com',
-    iosBundleId: 'com.example.meet',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyBSSFab1MQkRtSqd-z9SMem2yoPCK-ZxjI',
-    appId: '1:486814867638:ios:7c62dd1362456c2bab4617',
-    messagingSenderId: '486814867638',
-    projectId: 'asdasf-b2f36',
-    storageBucket: 'asdasf-b2f36.appspot.com',
-    iosClientId: '486814867638-voe0i795p0ktic03ccstnng01cn1gq2q.apps.googleusercontent.com',
-    iosBundleId: 'com.example.meet.RunnerTests',
   );
 }

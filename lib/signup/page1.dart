@@ -10,19 +10,24 @@ class Page1 extends StatelessWidget {
       appBar: AppBar(
         title: const Text('회원가입'),
       ),
-      body: const Center(
-        child: Text('회원가입 화면'),
-      ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const FirstPage()),
-            );
-          },
-          child: const Text('다음'),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            const Text('회원가입 화면'),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const FirstPage()),
+                  );
+                },
+                child: const Text('간편하게 계속하기'),
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -2,9 +2,15 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:meet/signup/page1.dart';
-// Import the FirstPage. Replace 'your_project_name' with the name of your project.
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized(); // Firebase 초기화 전에 반드시 호출
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(const MeetApp());
 }
 

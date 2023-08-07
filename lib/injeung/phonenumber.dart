@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:meet/injeung/injeungnumber.dart'; // Import the InjeungNumberPage
 
-class InjeungNumberPage extends StatelessWidget {
-  const InjeungNumberPage({Key? key}) : super(key: key);
+class PhoneNumberPage extends StatelessWidget {
+  const PhoneNumberPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -21,55 +22,36 @@ class InjeungNumberPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             const Text(
-              '인증번호를 입력해 주세요.',
+              '휴대폰 번호를 입력해주세요.',
               style: TextStyle(fontSize: 24),
             ),
             const SizedBox(
                 height:
                     8), // Add some space between the text and the input field
             const Text(
-              '인증 번호가 전송됐어요. 받은 번호를 입력하면 인증이 완료돼요.',
+              '허위/중복 가입을 막고, 악성 사용자를 제제하는데 사용합니다.',
               style: TextStyle(fontSize: 16),
             ),
             const SizedBox(
                 height:
                     16), // Add some space between the text and the input field
-            Row(
-              children: <Widget>[
-                const Text(
-                  '+82',
-                  style: TextStyle(fontSize: 16),
-                ),
-                const SizedBox(
-                    width:
-                        8), // Add some space between the '+82' and the input field
-                Flexible(
-                  child: TextFormField(
-                    keyboardType: TextInputType.phone,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: '받은 번호',
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(
-                height: 16), // Add some space between the input fields
             TextFormField(
-              keyboardType: TextInputType.number,
+              keyboardType: TextInputType.phone,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
-                labelText: '6자리 숫자',
+                labelText: '010-xxxx-xxxx',
               ),
-              maxLength: 6,
             ),
             Expanded(
               child: Container(),
             ),
             ElevatedButton(
               onPressed: () {
-                // Insert the code to move to the next page here
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const InjeungNumberPage()),
+                );
               },
               child: const Text('계속하기'),
             ),

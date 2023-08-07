@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meet/addpage/add.dart'; // 여기에 경로를 정확하게 맞춰주세요.
+import 'package:meet/friendlist/friend.dart'; // 친구 목록 페이지의 경로로 수정
 
 class FirstPage extends StatefulWidget {
   final String? city;
@@ -30,18 +31,38 @@ class FirstPageState extends State<FirstPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (widget.city != null) Text('시: ${widget.city}'),
-            if (widget.district != null) Text('구: ${widget.district}'),
-            if (widget.people != null) Text('인원: ${widget.people}'),
-            const SizedBox(height: 20), // 버튼을 조금 아래로 이동시킵니다.
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const AddPage()),
-                );
+            InkWell(
+              onTap: () {
+                // 시, 구, 인원을 클릭했을 때 수행할 작업을 여기에 추가합니다.
+                // 예를 들어, 해당 정보에 대한 상세 페이지로 이동할 수 있습니다.
               },
-              child: const Text('등록하기'),
+              child: Column(
+                children: [
+                  if (widget.city != null && widget.district != null)
+                    Text(
+                        '지역: ${widget.city} ${widget.district}'), // 여기에서 '시'와 '구' 값을 함께 출력합니다.
+                  if (widget.people != null) Text('인원: ${widget.people}'),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    // 전화하기 버튼을 눌렀을 때 수행할 작업을 여기에 추가합니다.
+                  },
+                  child: const Text('전화하기'),
+                ),
+                const SizedBox(width: 10), // 두 버튼 사이의 간격을 조절합니다.
+                ElevatedButton(
+                  onPressed: () {
+                    // 채팅하기 버튼을 눌렀을 때 수행할 작업을 여기에 추가합니다.
+                  },
+                  child: const Text('채팅하기'),
+                ),
+              ],
             ),
           ],
         ),
@@ -50,10 +71,8 @@ class FirstPageState extends State<FirstPage> {
       Container(),
       Container(),
     ];
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('첫 페이지'),
-      ),
       body: widgetOptions[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
@@ -80,6 +99,35 @@ class FirstPageState extends State<FirstPage> {
         selectedItemColor: Colors.black,
         unselectedItemColor: Colors.black,
       ),
+      // "실시간" 탭에서만 + 버튼을 보여주기 위한 조건을 추가
+      floatingActionButton: buildFloatingButton(),
     );
+  }
+
+  Widget? buildFloatingButton() {
+    if (_selectedIndex == 0) {
+      return FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const AddPage()),
+          );
+        },
+        backgroundColor: Colors.black,
+        child: const Icon(Icons.add),
+      );
+    } else if (_selectedIndex == 3) {
+      return FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const FriendListPage()),
+          );
+        },
+        backgroundColor: Colors.black,
+        child: const Icon(Icons.group_add),
+      );
+    }
+    return null; // 아무 버튼도 반환하지 않는 경우
   }
 }

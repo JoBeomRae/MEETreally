@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:meet/firstloginpage/first_page.dart'; // 여기에 경로를 정확하게 맞춰주세요.
+import 'package:meet/firstloginpage/first_page.dart';
 
 class AddPage extends StatefulWidget {
   const AddPage({Key? key}) : super(key: key);
@@ -12,13 +12,13 @@ class _AddPageState extends State<AddPage> {
   String? _selectedCity;
   String? _selectedDistrict;
   String? _selectedPeople;
+  int _numberOfPeople = 0;
 
   final List<String> _cities = ['서울특별시', '부산광역시'];
   final Map<String, List<String>> _districts = {
     '서울특별시': ['강남구', '서초구'],
     '부산광역시': ['부산구', '구구']
   };
-
   final List<String> _people = ['2명', '3명', '4명'];
 
   @override
@@ -37,7 +37,7 @@ class _AddPageState extends State<AddPage> {
               onChanged: (String? newValue) {
                 setState(() {
                   _selectedCity = newValue;
-                  _selectedDistrict = null; // Reset district when city changes
+                  _selectedDistrict = null;
                 });
               },
               items: _cities.map<DropdownMenuItem<String>>((String value) {
@@ -71,6 +71,7 @@ class _AddPageState extends State<AddPage> {
               onChanged: (String? newValue) {
                 setState(() {
                   _selectedPeople = newValue;
+                  _numberOfPeople = int.parse(newValue![0]);
                 });
               },
               items: _people.map<DropdownMenuItem<String>>((String value) {
@@ -80,6 +81,13 @@ class _AddPageState extends State<AddPage> {
                 );
               }).toList(),
             ),
+            for (var i = 0; i < _numberOfPeople; i++)
+              TextField(
+                decoration: InputDecoration(
+                  labelText: 'Nickname ${i + 1}',
+                  hintText: 'Enter name of Nickname ${i + 1}',
+                ),
+              ),
             ElevatedButton(
               child: const Text("등록하기"),
               onPressed: () {

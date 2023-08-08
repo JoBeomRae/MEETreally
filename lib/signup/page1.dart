@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:logger/logger.dart';
+import 'package:meet/firstloginpage/first.dart';
+import 'package:meet/injeung/emailname.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,6 +47,11 @@ class _SignInPageState extends State<SignInPage> {
 
       if (userCredential.user != null) {
         logger.i('로그인 성공: ${userCredential.user?.email}');
+        // ignore: use_build_context_synchronously
+        Navigator.pushReplacement( // 현재 페이지를 교체
+          context,
+          MaterialPageRoute(builder: (context) => const FirstPage()),
+        );
       } else {
         logger.w('로그인 실패');
       }
@@ -78,10 +86,22 @@ class _SignInPageState extends State<SignInPage> {
               ),
               obscureText: true,
             ),
+            const SizedBox(height: 16),
             ElevatedButton(
               onPressed: _signIn,
               child: const Text('로그인'),
             ),
+            const SizedBox(height: 16),
+ElevatedButton(
+  onPressed: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const EmailNamePage()), // injeung의 emailname.dart의 EmailNamePage로 이동
+    );
+  },
+  child: const Text('회원가입'),
+),
+
           ],
         ),
       ),

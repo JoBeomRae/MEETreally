@@ -1,29 +1,88 @@
 import 'package:flutter/material.dart';
-import 'package:meet/injeung/phonenumber.dart'; // Import the PhoneNumberPage. Replace 'your_project_name' with the name of your project.
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:logger/logger.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(const Page1());
+}
+
+final logger = Logger();
 
 class Page1 extends StatelessWidget {
-  const Page1({Key? key}) : super(key: key);
+  const Page1({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      home: SignInPage(),
+    );
+  }
+}
+
+class SignInPage extends StatefulWidget {
+  const SignInPage({super.key});
+
+  @override
+  _SignInPageState createState() => _SignInPageState();
+}
+
+class _SignInPageState extends State<SignInPage> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  Future<void> _signIn() async {
+    try {
+      final UserCredential userCredential =
+          await _auth.signInWithEmailAndPassword(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+
+      if (userCredential.user != null) {
+        logger.i('로그인 성공: ${userCredential.user?.email}');
+      } else {
+        logger.w('로그인 실패');
+      }
+    } catch (e) {
+      logger.e('Error: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('회원가입'),
+        title: const Text('Firebase 로그인'),
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-          child: ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        const PhoneNumberPage()), // Go to PhoneNumberPage on button press.
-              );
-            },
-            child: const Text('간편하게 계속하기'),
-          ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            TextField(
+              controller: _emailController,
+              decoration: const InputDecoration(
+                labelText: '이메일',
+                hintText: '이메일을 입력하세요',
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _passwordController,
+              decoration: const InputDecoration(
+                labelText: '비밀번호',
+                hintText: '비밀번호를 입력하세요',
+              ),
+              obscureText: true,
+            ),
+            ElevatedButton(
+              onPressed: _signIn,
+              child: const Text('로그인'),
+            ),
+          ],
         ),
       ),
     );

@@ -11,10 +11,11 @@ class PhoneNumberPage extends StatefulWidget {
 }
 
 class _PhoneNumberPageState extends State<PhoneNumberPage> {
-  final TextEditingController _controller = TextEditingController();
+  final TextEditingController _controller = TextEditingController(text: '+82');
   bool _canContinue = false;
   final _auth = FirebaseAuth.instance;
   final _logger = Logger();
+  String? _verificationId; // verificationId를 저장하기 위한 변수 추가
 
   Future<void> _verifyPhoneNumber() async {
     verificationCompleted(PhoneAuthCredential credential) async {
@@ -30,6 +31,7 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
 
     codeSent(String verificationId, [int? forceResendingToken]) async {
       _logger.i('Please check your phone for the verification code.');
+      _verificationId = verificationId; // 받은 verificationId 저장
     }
 
     codeAutoRetrievalTimeout(String verificationId) {
@@ -82,11 +84,16 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
                 border: OutlineInputBorder(),
                 labelText: '010-xxxx-xxxx',
               ),
+              onTap: () {
+                // 사용자가 입력 칸을 탭하면 커서를 '+82' 뒤로 이동
+                _controller.selection =
+                    TextSelection.collapsed(offset: _controller.text.length);
+              },
               onChanged: (value) {
                 setState(() {
-                  _canContinue = value.isNotEmpty;
+                  _canContinue = value.isNotEmpty && value != "+82";
                 });
-                if (value.isNotEmpty) {
+                if (value.isNotEmpty && value != "+82") {
                   _verifyPhoneNumber();
                 }
               },
@@ -98,7 +105,8 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const InjeungNumberPage()),
+                            builder: (context) => InjeungNumberPage(
+                                verificationId: _verificationId ?? '')),
                       );
                     }
                   : null,

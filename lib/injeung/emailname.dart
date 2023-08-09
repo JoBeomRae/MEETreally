@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:meet/firstloginpage/first.dart';
-import 'package:logger/logger.dart';
 
 class EmailNamePage extends StatefulWidget {
-  const EmailNamePage({Key? key}) : super(key: key);
+  const EmailNamePage({super.key});
 
   @override
   _EmailNamePageState createState() => _EmailNamePageState();
@@ -12,73 +12,107 @@ class EmailNamePage extends StatefulWidget {
 
 class _EmailNamePageState extends State<EmailNamePage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _nameController =
-      TextEditingController(); // 이름 입력을 위한 컨트롤러
-  final TextEditingController _ageController =
-      TextEditingController(); // 나이 입력을 위한 컨트롤러
-  final TextEditingController _jobController =
-      TextEditingController(); // 직업 입력을 위한 컨트롤러
-  final Logger _logger = Logger();
-
-  void _registerUser() async {
-    try {
-      // ignore: unused_local_variable
-      UserCredential userCredential =
-          await _auth.createUserWithEmailAndPassword(
-        email: _emailController.text,
-        password: _passwordController.text,
-      );
-
-      // ignore: use_build_context_synchronously
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const FirstPage()),
-      );
-    } catch (error) {
-      _logger.e('회원가입 실패: $error');
-    }
-  }
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _ageController = TextEditingController();
+  final TextEditingController _jobController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('회원가입')),
-      body: Center(
+      appBar: AppBar(title: const Text('회원 정보 입력')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // 이메일 입력
             TextField(
               controller: _emailController,
-              decoration: const InputDecoration(labelText: '이메일'),
+              decoration: const InputDecoration(
+                labelText: '이메일',
+                hintText: '이메일을 입력하세요',
+              ),
             ),
+            const SizedBox(height: 16),
+            // 비밀번호 입력
             TextField(
               controller: _passwordController,
-              decoration: const InputDecoration(labelText: '비밀번호'),
+              decoration: const InputDecoration(
+                labelText: '비밀번호',
+                hintText: '비밀번호를 입력하세요',
+              ),
               obscureText: true,
             ),
+            const SizedBox(height: 16),
+            // 이름 입력
             TextField(
               controller: _nameController,
-              decoration: const InputDecoration(labelText: '이름'),
+              decoration: const InputDecoration(
+                labelText: '이름',
+                hintText: '이름을 입력하세요',
+              ),
             ),
+            const SizedBox(height: 16),
+            // 나이 입력
             TextField(
               controller: _ageController,
-              decoration: const InputDecoration(labelText: '나이'),
-              keyboardType: TextInputType.number, // 숫자 입력 키보드를 사용
+              decoration: const InputDecoration(
+                labelText: '나이',
+                hintText: '나이를 입력하세요',
+              ),
+              keyboardType: TextInputType.number,
             ),
+            const SizedBox(height: 16),
+            // 직업 입력
             TextField(
               controller: _jobController,
-              decoration: const InputDecoration(labelText: '직업'),
+              decoration: const InputDecoration(
+                labelText: '직업',
+                hintText: '직업을 입력하세요',
+              ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
+            // 회원가입 버튼
             ElevatedButton(
-              onPressed: _registerUser,
-              child: const Text('회원가입완료'),
+              onPressed: () => _registerAccount(context),
+              child: const Text('회원가입 완료'),
             ),
           ],
         ),
       ),
     );
+  }
+
+  Future<void> _registerAccount(BuildContext context) async {
+    try {
+      // Firebase에 이메일과 비밀번호로 회원가입
+      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+
+      if (userCredential.user != null) {
+        // Firestore에 이름, 나이, 직업 정보 저장
+        await _firestore.collection('users').doc(userCredential.user?.uid).set({
+          'email': _emailController.text,
+          'name': _nameController.text,
+          'age': _ageController.text,
+          'job': _jobController.text,
+        });
+
+        // first.dart로 이동
+        // ignore: use_build_context_synchronously
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const FirstPage()),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("에러 발생: $e")),
+      );
+    }
   }
 }

@@ -20,11 +20,11 @@ class _EmailNamePageState extends State<EmailNamePage> {
   final TextEditingController _jobController = TextEditingController();
   final TextEditingController _nicknameController = TextEditingController();
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('회원 정보 입력')),
+      // 앱바 제거
+      // appBar: AppBar(title: const Text('회원 정보 입력')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -50,14 +50,12 @@ class _EmailNamePageState extends State<EmailNamePage> {
             const SizedBox(height: 16),
             // 이름 입력
             TextField(
-  controller: _nicknameController,
-  decoration: const InputDecoration(
-    labelText: '닉네임',
-    hintText: '닉네임을 입력하세요',
-  ),
-),
-            
-            
+              controller: _nicknameController,
+              decoration: const InputDecoration(
+                labelText: '닉네임',
+                hintText: '닉네임을 입력하세요',
+              ),
+            ),
             TextField(
               controller: _nameController,
               decoration: const InputDecoration(
@@ -85,10 +83,22 @@ class _EmailNamePageState extends State<EmailNamePage> {
               ),
             ),
             const SizedBox(height: 16),
-            // 회원가입 버튼
-            ElevatedButton(
-              onPressed: () => _registerAccount(context),
-              child: const Text('회원가입 완료'),
+            // "계속하기" 버튼 스타일로 변경
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () => _registerAccount(context),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFFFEE71),
+                  foregroundColor: Colors.black,
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                ),
+                child: const Text(
+                  '계속하기',
+                  style: TextStyle(fontSize: 21),
+                ),
+              ),
             ),
           ],
         ),
@@ -98,23 +108,20 @@ class _EmailNamePageState extends State<EmailNamePage> {
 
   Future<void> _registerAccount(BuildContext context) async {
     try {
-      // Firebase에 이메일과 비밀번호로 회원가입
       UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
         email: _emailController.text,
         password: _passwordController.text,
       );
 
       if (userCredential.user != null) {
-        // Firestore에 이름, 나이, 직업 정보 저장
         await _firestore.collection('users').doc(userCredential.user?.uid).set({
           'email': _emailController.text,
-          'nickname': _nicknameController.text, // 닉네임 추가
+          'nickname': _nicknameController.text,
           'name': _nameController.text,
           'age': _ageController.text,
           'job': _jobController.text,
         });
 
-        // first.dart로 이동
         // ignore: use_build_context_synchronously
         Navigator.pushReplacement(
           context,

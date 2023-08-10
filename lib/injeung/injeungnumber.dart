@@ -74,10 +74,25 @@ class _InjeungNumberPageState extends State<InjeungNumberPage> {
               maxLength: 6,
             ),
             const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _verifySmsCode,
-              child: const Text('계속하기'),
-            ),
+
+
+            SizedBox(
+  width: double.infinity,  // 화면의 너비로 꽉 차게 설정
+  child: ElevatedButton(
+    onPressed: _verifySmsCode,
+    style: ElevatedButton.styleFrom(
+      backgroundColor: const Color(0xFFFFEE71),  // 버튼의 배경색 설정
+      foregroundColor: Colors.black,  // 버튼의 텍스트 색상
+      padding: const EdgeInsets.symmetric(vertical: 16.0),  // 버튼 패딩
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),  // 버튼 모서리 둥글게
+    ),
+    child: const Text(
+      '계속하기',
+      style: TextStyle(fontSize: 21),  // 텍스트 크기를 21로 설정
+    ),
+  ),
+),
+
           ],
         ),
       ),

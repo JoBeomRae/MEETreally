@@ -44,16 +44,12 @@ class SplashScreenState extends State<SplashScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: Colors.white,
-      body: Center(
-        child: Text(
-          'MEET',
-          style: TextStyle(
-              fontSize: 48, fontWeight: FontWeight.bold, color: Colors.black),
-        ),
-      ),
-    );
-  }
+Widget build(BuildContext context) {
+  return Scaffold(
+    backgroundColor: const Color(0xFFFFEE71), // 16진수 색상 값으로 배경색 설정
+    body: Center(
+      child: Image.asset('assets/MEET.png'),
+    ),
+  );
+}
 }

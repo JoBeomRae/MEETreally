@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:meet/friendlist/friend.dart';
+import 'package:meet/my/friend.dart';
 
 class InMy extends StatefulWidget {
   const InMy({super.key});

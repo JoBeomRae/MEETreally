@@ -122,12 +122,6 @@ Column(
 
 
 
-
-
-
-
-
-
             // 등록하기 버튼
             ElevatedButton(
               onPressed: () {

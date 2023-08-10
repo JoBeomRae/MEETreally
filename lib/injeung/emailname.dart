@@ -18,6 +18,8 @@ class _EmailNamePageState extends State<EmailNamePage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _ageController = TextEditingController();
   final TextEditingController _jobController = TextEditingController();
+  final TextEditingController _nicknameController = TextEditingController();
+
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +49,15 @@ class _EmailNamePageState extends State<EmailNamePage> {
             ),
             const SizedBox(height: 16),
             // 이름 입력
+            TextField(
+  controller: _nicknameController,
+  decoration: const InputDecoration(
+    labelText: '닉네임',
+    hintText: '닉네임을 입력하세요',
+  ),
+),
+            
+            
             TextField(
               controller: _nameController,
               decoration: const InputDecoration(
@@ -97,6 +108,7 @@ class _EmailNamePageState extends State<EmailNamePage> {
         // Firestore에 이름, 나이, 직업 정보 저장
         await _firestore.collection('users').doc(userCredential.user?.uid).set({
           'email': _emailController.text,
+          'nickname': _nicknameController.text, // 닉네임 추가
           'name': _nameController.text,
           'age': _ageController.text,
           'job': _jobController.text,

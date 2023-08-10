@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:meet/friendlist/friend.dart';
 
 class InMy extends StatefulWidget {
   const InMy({super.key});
@@ -41,12 +42,25 @@ class _InMyState extends State<InMy> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           if (userInfo != null) ...[
+            Text("닉네임: ${userInfo!['nickname']}"),  // 닉네임 추가
+
             Text("이름: ${userInfo!['name']}"),
             Text("나이: ${userInfo!['age'].toString()}"),
             Text("직업: ${userInfo!['job']}"),
           ] else ...[
             const Text("정보를 가져오는 중..."),
-          ]
+          ],
+          const SizedBox(height: 20), // Add some space
+          MaterialButton(
+            color: Colors.blue,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const FriendList()),
+              );
+            },
+            child: const Text('친구목록 보기'),
+          )
         ],
       ),
     );

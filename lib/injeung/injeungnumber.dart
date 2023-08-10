@@ -70,7 +70,11 @@ class _InjeungNumberPageState extends State<InjeungNumberPage> {
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: '6자리 숫자',
-              ),
+                   labelStyle: TextStyle(color: Colors.black), // 라벨 텍스트를 검은색으로 설정
+ focusedBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.black, width: 2.0), // 포커스된 테두리 색상을 흰색으로
+    ),
+  ),
               maxLength: 6,
             ),
             const SizedBox(height: 16),
@@ -81,8 +85,8 @@ class _InjeungNumberPageState extends State<InjeungNumberPage> {
   child: ElevatedButton(
     onPressed: _verifySmsCode,
     style: ElevatedButton.styleFrom(
-      backgroundColor: const Color(0xFFFFEE71),  // 버튼의 배경색 설정
-      foregroundColor: Colors.black,  // 버튼의 텍스트 색상
+      backgroundColor: const Color.fromARGB(255, 0, 0, 0),  // 버튼의 배경색 설정
+      foregroundColor: const Color.fromARGB(255, 255, 255, 255),  // 버튼의 텍스트 색상
       padding: const EdgeInsets.symmetric(vertical: 16.0),  // 버튼 패딩
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),  // 버튼 모서리 둥글게
     ),

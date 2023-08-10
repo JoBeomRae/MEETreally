@@ -46,7 +46,7 @@ class SplashScreenState extends State<SplashScreen> {
   @override
 Widget build(BuildContext context) {
   return Scaffold(
-    backgroundColor: const Color(0xFFFFEE71), // 16진수 색상 값으로 배경색 설정
+    backgroundColor: const Color.fromARGB(255, 255, 255, 255), // 16진수 색상 값으로 배경색 설정
     body: Center(
       child: Image.asset('assets/MEET.png'),
     ),

@@ -55,6 +55,7 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+            backgroundColor: Colors.white,  // 배경색을 흰색으로 설정
       appBar: AppBar(
         automaticallyImplyLeading: true,
         title: const Text(''),
@@ -77,27 +78,33 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
               style: TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 16),
-            TextFormField(
-              controller: _controller,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: '010-xxxx-xxxx',
-              ),
-              onTap: () {
-                // 사용자가 입력 칸을 탭하면 커서를 '+82' 뒤로 이동
-                _controller.selection =
-                    TextSelection.collapsed(offset: _controller.text.length);
-              },
-              onChanged: (value) {
-                setState(() {
-                  _canContinue = value.isNotEmpty && value != "+82";
-                });
-                if (value.isNotEmpty && value != "+82") {
-                  _verifyPhoneNumber();
-                }
-              },
-            ),          
+ TextFormField(
+  controller: _controller,
+  keyboardType: TextInputType.number,
+  decoration: const InputDecoration(
+    border: OutlineInputBorder(),
+    labelText: '010-xxxx-xxxx',
+   labelStyle: TextStyle(color: Colors.black), // 라벨 텍스트를 검은색으로 설정
+
+    focusedBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.black, width: 2.0), // 포커스된 테두리 색상을 흰색으로
+    ),
+  ),
+  onTap: () {
+    // 사용자가 입력 칸을 탭하면 커서를 '+82' 뒤로 이동
+    _controller.selection =
+        TextSelection.collapsed(offset: _controller.text.length);
+  },
+  onChanged: (value) {
+    setState(() {
+      _canContinue = value.isNotEmpty && value != "+82";
+    });
+    if (value.isNotEmpty && value != "+82") {
+      _verifyPhoneNumber();
+    }
+  },
+),
+
        const SizedBox(height: 16),
 
 
@@ -115,8 +122,8 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
           }
         : null,
     style: ElevatedButton.styleFrom(
-      backgroundColor: const Color(0xFFFFEE71), // 버튼의 배경색 설정
-      foregroundColor: Colors.black, // 버튼의 텍스트 색상
+      backgroundColor: const Color.fromARGB(255, 0, 0, 0), // 버튼의 배경색 설정
+      foregroundColor: const Color.fromARGB(255, 255, 255, 255), // 버튼의 텍스트 색상
       padding: const EdgeInsets.symmetric(vertical: 16.0), // 버튼 패딩
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)), // 버튼 모서리 둥글게
     ),

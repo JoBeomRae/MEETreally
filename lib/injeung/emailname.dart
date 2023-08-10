@@ -33,8 +33,12 @@ class _EmailNamePageState extends State<EmailNamePage> {
             TextField(
               controller: _emailController,
               decoration: const InputDecoration(
-                labelText: '이메일',
+                labelText: '이메일 *',
+                labelStyle: TextStyle(color: Colors.black), // 라벨 텍스트를 검은색으로 설정
                 hintText: '이메일을 입력하세요',
+                  focusedBorder: OutlineInputBorder(
+    borderSide: BorderSide(color: Colors.black, width: 1.0),
+  ),
               ),
             ),
             const SizedBox(height: 16),
@@ -42,8 +46,12 @@ class _EmailNamePageState extends State<EmailNamePage> {
             TextField(
               controller: _passwordController,
               decoration: const InputDecoration(
-                labelText: '비밀번호',
+                labelText: '비밀번호 *',
+                labelStyle: TextStyle(color: Colors.black),
                 hintText: '비밀번호를 입력하세요',
+                focusedBorder: OutlineInputBorder(
+    borderSide: BorderSide(color: Colors.black, width: 1.0),
+  ),
               ),
               obscureText: true,
             ),
@@ -52,15 +60,23 @@ class _EmailNamePageState extends State<EmailNamePage> {
             TextField(
               controller: _nicknameController,
               decoration: const InputDecoration(
-                labelText: '닉네임',
+                labelText: '닉네임 *',
+                labelStyle: TextStyle(color: Colors.black),
                 hintText: '닉네임을 입력하세요',
+                focusedBorder: OutlineInputBorder(
+    borderSide: BorderSide(color: Colors.black, width: 1.0),
+  ),
               ),
             ),
             TextField(
               controller: _nameController,
               decoration: const InputDecoration(
-                labelText: '이름',
+                labelText: '이름 ',
+                labelStyle: TextStyle(color: Colors.black),
                 hintText: '이름을 입력하세요',
+                focusedBorder: OutlineInputBorder(
+    borderSide: BorderSide(color: Colors.black, width: 1.0),
+  ),
               ),
             ),
             const SizedBox(height: 16),
@@ -69,7 +85,11 @@ class _EmailNamePageState extends State<EmailNamePage> {
               controller: _ageController,
               decoration: const InputDecoration(
                 labelText: '나이',
+                labelStyle: TextStyle(color: Colors.black),
                 hintText: '나이를 입력하세요',
+                focusedBorder: OutlineInputBorder(
+    borderSide: BorderSide(color: Colors.black, width: 1.0),
+  ),
               ),
               keyboardType: TextInputType.number,
             ),
@@ -79,7 +99,11 @@ class _EmailNamePageState extends State<EmailNamePage> {
               controller: _jobController,
               decoration: const InputDecoration(
                 labelText: '직업',
+                labelStyle: TextStyle(color: Colors.black),
                 hintText: '직업을 입력하세요',
+                focusedBorder: OutlineInputBorder(
+    borderSide: BorderSide(color: Colors.black, width: 1.0),
+  ),
               ),
             ),
             const SizedBox(height: 16),
@@ -89,8 +113,8 @@ class _EmailNamePageState extends State<EmailNamePage> {
               child: ElevatedButton(
                 onPressed: () => _registerAccount(context),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFFFEE71),
-                  foregroundColor: Colors.black,
+                  backgroundColor: const Color.fromARGB(255, 0, 0, 0),
+                  foregroundColor: const Color.fromARGB(255, 255, 255, 255),
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                 ),

@@ -66,48 +66,72 @@ class _SignInPageState extends State<SignInPage> {
 @override
 Widget build(BuildContext context) {
   return Scaffold(
+      backgroundColor: Colors.white,  // 배경색을 흰색으로 설정
     body: Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,  // 버튼을 확장하기 위해 변경
+        crossAxisAlignment: CrossAxisAlignment.center,  // 중앙에 위치하기 위해 변경
         children: [
           const SizedBox(height: 50),  // <-- 이 부분을 추가함
 
           const Text(
+            "MEET",
+            textAlign: TextAlign.center,  // 중앙 정렬
+            style: TextStyle(fontSize: 70, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 6),  // 간격 조절을 위한 SizedBox
+
+          const Text(
             "우리 MEET으로 헌팅해요",
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,  // 중앙 정렬
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
           ),
           const SizedBox(height: 24),
+
+
           TextFormField(
             controller: _emailController,
             decoration: const InputDecoration(
               labelText: '이메일',
+                  labelStyle: TextStyle(color: Colors.black), // 라벨 텍스트를 검은색으로 설정
+
               hintText: '이메일을 입력하세요',
               filled: true,
+             fillColor: Colors.white, // 배경색을 흰색으로 설정
+
               border: OutlineInputBorder(),
-            ),
-          ),
+focusedBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Color.fromARGB(255, 0, 0, 0), width: 2.0), // 포커스된 테두리 색상을 빨간색으로
+    ),
+  ),
+),
           const SizedBox(height: 16),
           TextFormField(
             controller: _passwordController,
             decoration: const InputDecoration(
               labelText: '비밀번호',
+                  labelStyle: TextStyle(color: Colors.black), // 라벨 텍스트를 검은색으로 설정
+
               hintText: '비밀번호를 입력하세요',
               filled: true,
+                  fillColor: Colors.white, // 배경색을 흰색으로 설정
+
               border: OutlineInputBorder(),
-            ),
-            obscureText: true,
-          ),
+focusedBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Color.fromARGB(255, 0, 0, 0), width: 2.0), // 포커스된 테두리 색상을 빨간색으로
+    ),
+  ),
+),
           const SizedBox(height: 16),
         
 SizedBox(
   height: 46,
-  width: 0,  // 버튼의 가로 길이를 원하는 크기로 변경
+   width: double.infinity,  // 가로로 화면에 가득 차게 설정
   child: ElevatedButton(
     onPressed: _signIn,
     style: ElevatedButton.styleFrom(
-      backgroundColor: const Color(0xFFFFEE71),
-      foregroundColor: Colors.black,
+      backgroundColor: const Color.fromARGB(255, 0, 0, 0),
+      foregroundColor: const Color.fromARGB(255, 255, 255, 255),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),

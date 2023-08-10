@@ -12,8 +12,14 @@ class _InNowPageState extends State<InNow> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+                  backgroundColor: Colors.white,  // 배경색을 흰색으로 설정
       appBar: AppBar(
-        title: const Text('InNow'),
+        backgroundColor: Colors.white, // 앱바의 색상을 흰색으로 설정
+        title: const Text(
+          '실시간',
+          style: TextStyle(color: Colors.black), // 제목의 색상을 검은색으로 설정
+        ),
+        elevation: 0, // 앱바의 그림자와 테두리를 없앤다
       ),
       body: const Center(
         child: Text('InNow Page Content'),

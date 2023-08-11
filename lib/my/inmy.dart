@@ -42,7 +42,7 @@ class _InMyState extends State<InMy> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           if (userInfo != null) ...[
-            Text("닉네임: ${userInfo!['nickname']}"),  // 닉네임 추가
+            Text("닉네임: ${userInfo!['nickname']}"), // 닉네임 추가
 
             Text("이름: ${userInfo!['name']}"),
             Text("나이: ${userInfo!['age'].toString()}"),

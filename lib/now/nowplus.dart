@@ -15,16 +15,26 @@ class _NowPlusPageState extends State<NowPlusPage> {
 
   Map<String, List<String>> locations = {
     '서울특별시': [
-      '종로구', '중구', '용산구', '성동구', '광진구', '동대문구',
+      '종로구',
+      '중구',
+      '용산구',
+      '성동구',
+      '광진구',
+      '동대문구',
     ],
     '부산광역시': [
-      '읍부', '면부', '동부', '중구', '서구', '동구',
+      '읍부',
+      '면부',
+      '동부',
+      '중구',
+      '서구',
+      '동구',
     ],
   };
 
-  String? selectedSi; 
-  List<String>? selectedGuList; 
-  String? selectedGu; 
+  String? selectedSi;
+  List<String>? selectedGuList;
+  String? selectedGu;
   String? selectedPeople;
   int? selectedPeopleCount; // 선택된 인원 수
 
@@ -53,7 +63,7 @@ class _NowPlusPageState extends State<NowPlusPage> {
                   _siController.text = newValue!;
                   selectedGuList = locations[newValue];
                   selectedGu = null;
-                  _guController.text = ''; 
+                  _guController.text = '';
                 });
               },
               hint: const Text('시를 선택해주세요.'),
@@ -81,46 +91,42 @@ class _NowPlusPageState extends State<NowPlusPage> {
 
             // 동
 
-
             // 인원
-DropdownButton<int>(
-  value: selectedPeopleCount,
-  items: [2, 3, 4].map((int person) {
-    return DropdownMenuItem<int>(
-      value: person,
-      child: Text('$person명'),
-    );
-  }).toList(),
-  onChanged: (int? newValue) {
-    setState(() {
-      selectedPeopleCount = newValue;
-      _personController.text = '$newValue명';
-    });
-  },
-  hint: const Text('인원을 선택해주세요.'),
-),
-const SizedBox(height: 16),
-
-Column(
-  children: selectedPeopleCount != null 
-    ? List.generate(selectedPeopleCount!, (int index) {
-        return Column(
-          children: [
-            TextField(
-              decoration: InputDecoration(
-                labelText: '${index + 1}번째 사람',
-                hintText: '이름을 입력해주세요.',
-              ),
+            DropdownButton<int>(
+              value: selectedPeopleCount,
+              items: [2, 3, 4].map((int person) {
+                return DropdownMenuItem<int>(
+                  value: person,
+                  child: Text('$person명'),
+                );
+              }).toList(),
+              onChanged: (int? newValue) {
+                setState(() {
+                  selectedPeopleCount = newValue;
+                  _personController.text = '$newValue명';
+                });
+              },
+              hint: const Text('인원을 선택해주세요.'),
             ),
             const SizedBox(height: 16),
-          ],
-        );
-      })
-    : [], // 만약 선택된 인원 수가 없다면 빈 리스트를 반환
-),
 
-
-
+            Column(
+              children: selectedPeopleCount != null
+                  ? List.generate(selectedPeopleCount!, (int index) {
+                      return Column(
+                        children: [
+                          TextField(
+                            decoration: InputDecoration(
+                              labelText: '${index + 1}번째 친구',
+                              hintText: '닉네임을 입력해주세요.',
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                      );
+                    })
+                  : [], // 만약 선택된 인원 수가 없다면 빈 리스트를 반환
+            ),
 
             // 등록하기 버튼
             ElevatedButton(

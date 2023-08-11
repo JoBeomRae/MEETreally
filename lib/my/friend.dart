@@ -1,4 +1,3 @@
-// friend.dart
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -10,18 +9,38 @@ class FriendList extends StatefulWidget {
 }
 
 class _FriendListState extends State<FriendList> {
-  final TextEditingController _nicknameController = TextEditingController();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final String currentUserID = "YOUR_CURRENT_USER_ID"; // 현재 로그인한 사용자의 ID
+  final TextEditingController _nicknameController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('친구목록'),
-      ),
-      body: const Center(
-        child: Text('친구 목록을 여기에 표시합니다!'),
+      appBar: AppBar(title: const Text('친구 관리')),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: _firestore.collection('friends').snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          final friends = snapshot.data!.docs;
+          List<Widget> friendWidgets = friends.map((doc) {
+            Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+            return ListTile(
+              title: Text('닉네임: ${data['nickname']}'),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('이름: ${data['name']}'),
+                  Text('나이: ${data['age']}'),
+                  Text('직업: ${data['job']}'),
+                ],
+              ),
+            );
+          }).toList();
+
+          return ListView(children: friendWidgets);
+        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showAddFriendDialog(context),
@@ -30,8 +49,8 @@ class _FriendListState extends State<FriendList> {
     );
   }
 
-   _showAddFriendDialog(BuildContext context) async {
-    return await showDialog(
+  Future<void> _showAddFriendDialog(BuildContext context) async {
+    return showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
@@ -41,60 +60,67 @@ class _FriendListState extends State<FriendList> {
             TextButton(
               child: const Text("확인"),
               onPressed: () async {
+                final nickname = _nicknameController.text;
                 QuerySnapshot snapshot = await _firestore
                     .collection('users')
-                    .where('nickname', isEqualTo: _nicknameController.text)
+                    .where('nickname', isEqualTo: nickname)
                     .get();
 
                 if (snapshot.docs.isNotEmpty) {
-                  final userInfo = snapshot.docs.first.data() as Map<String, dynamic>;
+                  final user = snapshot.docs.first;
+                  final userData = user.data() as Map<String, dynamic>;
 
                   // ignore: use_build_context_synchronously
-                  Navigator.pop(context); // 첫 번째 대화상자 닫기
-
+                  Navigator.pop(context);
                   // ignore: use_build_context_synchronously
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: const Text("사용자 정보"),
-                        content: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text("이름: ${userInfo['name']}"),
-                            Text("나이: ${userInfo['age'].toString()}"),
-                            Text("직업: ${userInfo['job']}"),
-                          ],
-                        ),
-                        actions: [
-                          TextButton(
-                            child: const Text("친구추가"),
-                            onPressed: () async {
-                              // Firestore에 친구 요청 저장
-                              await _firestore.collection('friend_requests').add({
-                                'from': currentUserID,
-                                'to': snapshot.docs.first.id,
-                              });
-                              // ignore: use_build_context_synchronously
-                              Navigator.pop(context); // 현재 대화상자 닫기
-                            },
-                          ),
-                          TextButton(
-                            child: const Text("취소"),
-                            onPressed: () {
-                              Navigator.pop(context); // 대화상자 닫기
-                            },
-                          ),
-                        ],
-                      );
-                    },
-                  );
+                  _showConfirmFriendDialog(context, userData);
                 } else {
                   // ignore: use_build_context_synchronously
+                  Navigator.pop(context);
+                  // ignore: use_build_context_synchronously
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("해당 닉네임의 사용자를 찾을 수 없습니다.")),
+                    const SnackBar(
+                      content: Text('해당 닉네임의 사용자를 찾을 수 없습니다.'),
+                    ),
                   );
                 }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showConfirmFriendDialog(
+      BuildContext context, Map<String, dynamic> userData) async {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("사용자 정보 확인"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text("닉네임: ${userData['nickname']}"),
+              Text("이름: ${userData['name']}"),
+              Text("나이: ${userData['age']}"),
+              Text("직업: ${userData['job']}"),
+            ],
+          ),
+          actions: [
+            TextButton(
+              child: const Text("친구추가"),
+              onPressed: () async {
+                await _firestore.collection('friends').add({
+                  'nickname': userData['nickname'],
+                  'name': userData['name'],
+                  'age': userData['age'],
+                  'job': userData['job'],
+                });
+
+                // ignore: use_build_context_synchronously
+                Navigator.pop(context);
               },
             ),
           ],

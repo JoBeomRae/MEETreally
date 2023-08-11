@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meet/now/innow.dart';
+import 'package:meet/my/friend.dart';
 
 class NowPlusPage extends StatefulWidget {
   const NowPlusPage({Key? key}) : super(key: key);
@@ -115,10 +116,20 @@ class _NowPlusPageState extends State<NowPlusPage> {
                   ? List.generate(selectedPeopleCount!, (int index) {
                       return Column(
                         children: [
-                          TextField(
-                            decoration: InputDecoration(
-                              labelText: '${index + 1}번째 친구',
-                              hintText: '닉네임을 입력해주세요.',
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    const FriendList(),
+                              ));
+                            },
+                            child: AbsorbPointer(
+                              child: TextField(
+                                decoration: InputDecoration(
+                                  labelText: '${index + 1}번째 친구',
+                                  hintText: '닉네임을 입력해주세요.',
+                                ),
+                              ),
                             ),
                           ),
                           const SizedBox(height: 16),

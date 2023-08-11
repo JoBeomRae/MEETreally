@@ -37,27 +37,39 @@ class _SignInPageState extends State<SignInPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
-  bool isRememberMe = false; // 추가된 체크박스 상태를 저장하는 변수
+  bool isRememberMe = false;
 
   @override
   void initState() {
     super.initState();
-    _loadSavedCredentials(); // 초기화될 때 저장된 크레덴셜을 로드
+    _loadSavedCredentials();
   }
 
-  // 저장된 이메일과 비밀번호를 로드하는 메소드
   _loadSavedCredentials() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      _emailController.text = prefs.getString('saved_email') ??
-          ''; // ?? 연산자를 사용하여 값이 null이면 빈 문자열을 반환
+      _emailController.text = prefs.getString('saved_email') ?? '';
       _passwordController.text = prefs.getString('saved_password') ?? '';
       isRememberMe = prefs.getBool('is_remember_me') ?? false;
     });
   }
 
+  _saveCredentials() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (isRememberMe) {
+      prefs.setString('saved_email', _emailController.text);
+      prefs.setString('saved_password', _passwordController.text);
+      prefs.setBool('is_remember_me', isRememberMe);
+    } else {
+      prefs.remove('saved_email');
+      prefs.remove('saved_password');
+      prefs.setBool('is_remember_me', isRememberMe);
+    }
+  }
+
   Future<void> _signIn() async {
+    _saveCredentials();
+
     try {
       final UserCredential userCredential =
           await _auth.signInWithEmailAndPassword(
@@ -69,7 +81,6 @@ class _SignInPageState extends State<SignInPage> {
         logger.i('로그인 성공: ${userCredential.user?.email}');
         // ignore: use_build_context_synchronously
         Navigator.pushReplacement(
-          // 현재 페이지를 교체
           context,
           MaterialPageRoute(builder: (context) => const FirstPage()),
         );
@@ -163,7 +174,7 @@ class _SignInPageState extends State<SignInPage> {
                       isRememberMe = !isRememberMe; // 체크박스 상태 변경
                     });
                   },
-                  child: const Text('아이디/비밀번호 저장하기'),
+                  child: const Text('이메일/비밀번호 저장하기'),
                 ),
               ],
             ),

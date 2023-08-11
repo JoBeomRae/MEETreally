@@ -1,6 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+// 친구 정보 모델 클래스
+class FriendInfo {
+  final String nickname;
+  final String name;
+  final int age;
+  final String job;
+
+  FriendInfo(
+      {required this.nickname,
+      required this.name,
+      required this.age,
+      required this.job});
+}
+
 class FriendList extends StatefulWidget {
   const FriendList({super.key});
 
@@ -24,20 +38,8 @@ class _FriendListState extends State<FriendList> {
           }
 
           final friends = snapshot.data!.docs;
-          List<Widget> friendWidgets = friends.map((doc) {
-            Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-            return ListTile(
-              title: Text('닉네임: ${data['nickname']}'),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('이름: ${data['name']}'),
-                  Text('나이: ${data['age']}'),
-                  Text('직업: ${data['job']}'),
-                ],
-              ),
-            );
-          }).toList();
+          List<Widget> friendWidgets =
+              friends.map((doc) => _buildFriendItem(doc)).toList();
 
           return ListView(children: friendWidgets);
         },
@@ -45,6 +47,39 @@ class _FriendListState extends State<FriendList> {
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showAddFriendDialog(context),
         child: const Icon(Icons.add),
+      ),
+    );
+  }
+
+  ListTile _buildFriendItem(QueryDocumentSnapshot doc) {
+    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+
+    return ListTile(
+      title: Text('닉네임: ${data['nickname']}'),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('이름: ${data['name']}'),
+          Text('나이: ${data['age']}'),
+          Text('직업: ${data['job']}'),
+        ],
+      ),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
+            icon: const Icon(Icons.edit),
+            onPressed: () {
+              // 친구 정보 수정 로직
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.delete),
+            onPressed: () async {
+              await _firestore.collection('friends').doc(doc.id).delete();
+            },
+          ),
+        ],
       ),
     );
   }
@@ -66,17 +101,15 @@ class _FriendListState extends State<FriendList> {
                     .where('nickname', isEqualTo: nickname)
                     .get();
 
+                // ignore: use_build_context_synchronously
+                Navigator.pop(context);
+
                 if (snapshot.docs.isNotEmpty) {
                   final user = snapshot.docs.first;
                   final userData = user.data() as Map<String, dynamic>;
-
-                  // ignore: use_build_context_synchronously
-                  Navigator.pop(context);
                   // ignore: use_build_context_synchronously
                   _showConfirmFriendDialog(context, userData);
                 } else {
-                  // ignore: use_build_context_synchronously
-                  Navigator.pop(context);
                   // ignore: use_build_context_synchronously
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
@@ -112,13 +145,7 @@ class _FriendListState extends State<FriendList> {
             TextButton(
               child: const Text("친구추가"),
               onPressed: () async {
-                await _firestore.collection('friends').add({
-                  'nickname': userData['nickname'],
-                  'name': userData['name'],
-                  'age': userData['age'],
-                  'job': userData['job'],
-                });
-
+                await _firestore.collection('friends').add(userData);
                 // ignore: use_build_context_synchronously
                 Navigator.pop(context);
               },

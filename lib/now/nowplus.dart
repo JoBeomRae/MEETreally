@@ -13,6 +13,7 @@ class _NowPlusPageState extends State<NowPlusPage> {
   final TextEditingController _siController = TextEditingController();
   final TextEditingController _guController = TextEditingController();
   final TextEditingController _personController = TextEditingController();
+  final List<TextEditingController> _controllers = [];
 
   Map<String, List<String>> locations = {
     '서울특별시': [
@@ -114,17 +115,33 @@ class _NowPlusPageState extends State<NowPlusPage> {
             Column(
               children: selectedPeopleCount != null
                   ? List.generate(selectedPeopleCount!, (int index) {
+                      while (_controllers.length <= index) {
+                        _controllers.add(TextEditingController());
+                      }
+
                       return Column(
                         children: [
                           GestureDetector(
-                            onTap: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                    const FriendList(),
-                              ));
+                            onTap: () async {
+                              final selectedNickname =
+                                  await Navigator.of(context).push<String>(
+                                MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      const FriendList(),
+                                ),
+                              );
+
+                              if (selectedNickname != null &&
+                                  selectedNickname.isNotEmpty) {
+                                setState(() {
+                                  _controllers[index].text = selectedNickname;
+                                });
+                              }
                             },
                             child: AbsorbPointer(
                               child: TextField(
+                                controller:
+                                    _controllers[index], // <-- 이 부분을 추가합니다.
                                 decoration: InputDecoration(
                                   labelText: '${index + 1}번째 친구',
                                   hintText: '닉네임을 입력해주세요.',

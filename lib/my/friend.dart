@@ -64,6 +64,9 @@ class _FriendListState extends State<FriendList> {
           Text('직업: ${data['job']}'),
         ],
       ),
+      onTap: () {
+        Navigator.pop(context, data['nickname']);
+      },
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [

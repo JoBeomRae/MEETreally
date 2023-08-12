@@ -156,7 +156,6 @@ class _SignInPageState extends State<SignInPage> {
             ),
             const SizedBox(height: 16),
 
-            const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.start, // 체크박스와 텍스트를 왼쪽으로 정렬
               children: [
@@ -178,6 +177,7 @@ class _SignInPageState extends State<SignInPage> {
                 ),
               ],
             ),
+            const SizedBox(height: 16),
 
             SizedBox(
               height: 46,

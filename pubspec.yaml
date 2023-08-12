@@ -36,7 +36,7 @@ dependencies:
   logger: "^2.0.1"
   image_picker: ^1.0.2
   shared_preferences : ^2.2.0
-
+  logging : ^1.2.0
 
 
 

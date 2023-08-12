@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-// 친구 정보 모델 클래스
 class FriendInfo {
   final String nickname;
   final String name;
@@ -25,28 +25,122 @@ class FriendList extends StatefulWidget {
 class _FriendListState extends State<FriendList> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final TextEditingController _nicknameController = TextEditingController();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  FriendInfo? loggedInUser;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchLoggedInUserInfo();
+  }
+
+  _fetchLoggedInUserInfo() async {
+    final user = _auth.currentUser;
+
+    if (user != null) {
+      final userDoc = await _firestore.collection('users').doc(user.uid).get();
+
+      if (userDoc.exists) {
+        setState(() {
+          final data = userDoc.data()!;
+          final ageString = data['age'] ?? '0';
+
+          loggedInUser = FriendInfo(
+            nickname: data['nickname'],
+            name: data['name'],
+            age: int.tryParse(ageString) ?? 0,
+            job: data['job'],
+          );
+        });
+      }
+    }
+  }
+
+  Future<void> _showUserInfoDialog(
+      BuildContext context, Map<String, dynamic> userInfo) async {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("사용자 정보"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text("닉네임: ${userInfo['nickname']}"),
+              Text("이름: ${userInfo['name']}"),
+              Text("나이: ${userInfo['age']}"),
+              Text("직업: ${userInfo['job']}"),
+            ],
+          ),
+          actions: [
+            TextButton(
+              child: const Text("확인"),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('친구 관리')),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: _firestore.collection('friends').snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pop(context);
+        return false;
+      },
+      child: Scaffold(
+        appBar: null,
+        body: Column(
+          children: [
+            if (loggedInUser != null) ...[
+              ListTile(
+                title: Text('닉네임: ${loggedInUser!.nickname}'),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('이름: ${loggedInUser!.name}'),
+                    Text('나이: ${loggedInUser!.age}'),
+                    Text('직업: ${loggedInUser!.job}'),
+                  ],
+                ),
+                onTap: () {
+                  _showUserInfoDialog(context, {
+                    'nickname': loggedInUser!.nickname,
+                    'name': loggedInUser!.name,
+                    'age': loggedInUser!.age.toString(),
+                    'job': loggedInUser!.job,
+                  });
+                },
+              ),
+              const Divider(),
+            ],
+            Expanded(
+              child: StreamBuilder<QuerySnapshot>(
+                stream: _firestore.collection('friends').snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
 
-          final friends = snapshot.data!.docs;
-          List<Widget> friendWidgets =
-              friends.map((doc) => _buildFriendItem(doc)).toList();
+                  final friends = snapshot.data!.docs;
+                  List<Widget> friendWidgets =
+                      friends.map((doc) => _buildFriendItem(doc)).toList();
 
-          return ListView(children: friendWidgets);
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _showAddFriendDialog(context),
-        child: const Icon(Icons.add),
+                  return ListView(children: friendWidgets);
+                },
+              ),
+            ),
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => _showAddFriendDialog(context),
+          child: const Icon(Icons.add),
+        ),
       ),
     );
   }
@@ -65,7 +159,7 @@ class _FriendListState extends State<FriendList> {
         ],
       ),
       onTap: () {
-        Navigator.pop(context, data['nickname']);
+        _showUserInfoDialog(context, data);
       },
       trailing: Row(
         mainAxisSize: MainAxisSize.min,

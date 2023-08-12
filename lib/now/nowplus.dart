@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meet/now/innow.dart';
-import 'package:meet/my/friend.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class NowPlusPage extends StatefulWidget {
   const NowPlusPage({Key? key}) : super(key: key);
@@ -25,6 +25,52 @@ class _NowPlusPageState extends State<NowPlusPage> {
   String? selectedGu;
   String? selectedPeople;
   int? selectedPeopleCount;
+
+  void _showFriendPicker(int index) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return SizedBox(
+            height: MediaQuery.of(context).size.height * 0.5, // 높이를 조절하세요.
+            child: Column(
+              children: [
+                const Text('친구를 선택하세요.'),
+                Expanded(
+                  child: StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('friends')
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+
+                      final friends = snapshot.data!.docs;
+                      return ListView.builder(
+                        itemCount: friends.length,
+                        itemBuilder: (context, position) {
+                          final friendData =
+                              friends[position].data() as Map<String, dynamic>;
+                          return ListTile(
+                            title: Text(friendData['nickname']),
+                            onTap: () {
+                              setState(() {
+                                _controllers[index].text =
+                                    friendData['nickname'];
+                              });
+                              Navigator.pop(context);
+                            },
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -113,20 +159,8 @@ class _NowPlusPageState extends State<NowPlusPage> {
                       return Column(
                         children: [
                           GestureDetector(
-                            onTap: () async {
-                              final selectedNickname =
-                                  await Navigator.of(context).push<String>(
-                                MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      const FriendList(),
-                                ),
-                              );
-                              if (selectedNickname != null &&
-                                  selectedNickname.isNotEmpty) {
-                                setState(() {
-                                  _controllers[index].text = selectedNickname;
-                                });
-                              }
+                            onTap: () {
+                              _showFriendPicker(index);
                             },
                             child: AbsorbPointer(
                               child: TextField(

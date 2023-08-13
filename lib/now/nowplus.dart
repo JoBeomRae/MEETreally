@@ -15,9 +15,13 @@ class _NowPlusPageState extends State<NowPlusPage> {
   final TextEditingController _personController = TextEditingController();
   final List<TextEditingController> _controllers = [];
 
-  Map<String, List<String>> locations = {
-    '서울특별시': ['종로구', '중구', '용산구', '성동구', '광진구', '동대문구'],
-    '부산광역시': ['읍부', '면부', '동부', '중구', '서구', '동구'],
+ Map<String, Map<String, List<String>>> locations = {
+  '서울특별시': {
+    '종로구': ['청운동', '효자동', '사직동'], // 예시 동 데이터입니다. 원하는대로 수정하세요.
+    '중구': ['을지로동', '명동', '필동'],
+  },   
+   '부산광역시': {
+    '읍부' : ['동1','동2'], },
   };
 
   String? selectedSi;
@@ -25,13 +29,15 @@ class _NowPlusPageState extends State<NowPlusPage> {
   String? selectedGu;
   String? selectedPeople;
   int? selectedPeopleCount;
+  String? selectedDong;
+List<String>? selectedDongList;
 
-  void _showFriendPicker(int index) {
+ void _showFriendPicker(int index) {
     showModalBottomSheet(
         context: context,
         builder: (BuildContext context) {
           return SizedBox(
-            height: MediaQuery.of(context).size.height * 0.5, // 높이를 조절하세요.
+            height: MediaQuery.of(context).size.height * 0.5,
             child: Column(
               children: [
                 const Text('친구를 선택하세요.'),
@@ -51,12 +57,17 @@ class _NowPlusPageState extends State<NowPlusPage> {
                         itemBuilder: (context, position) {
                           final friendData =
                               friends[position].data() as Map<String, dynamic>;
+
+                          // 닉네임, 나이, 직업 정보를 가져옴
+                          final nickname = friendData['nickname'];
+                          final age = friendData['age'];  // 'age' 필드명은 실제 데이터베이스 구조에 따라 다를 수 있습니다.
+                          final job = friendData['job'];  // 'job' 필드명도 실제 데이터베이스 구조에 따라 다를 수 있습니다.
+
                           return ListTile(
-                            title: Text(friendData['nickname']),
+                            title: Text('$nickname ($age, $job)'),
                             onTap: () {
                               setState(() {
-                                _controllers[index].text =
-                                    friendData['nickname'];
+                                _controllers[index].text = '$nickname ($age, $job)';
                               });
                               Navigator.pop(context);
                             },
@@ -70,7 +81,19 @@ class _NowPlusPageState extends State<NowPlusPage> {
             ),
           );
         });
+}
+
+
+@override
+void dispose() {
+  _siController.dispose();
+  _guController.dispose();
+  _personController.dispose();
+  for (var controller in _controllers) {
+    controller.dispose();
   }
+  super.dispose();
+}
 
   @override
   Widget build(BuildContext context) {
@@ -101,40 +124,61 @@ class _NowPlusPageState extends State<NowPlusPage> {
                   setState(() {
                     selectedSi = newValue;
                     _siController.text = newValue!;
-                    selectedGuList = locations[newValue];
+selectedGuList = locations[newValue]?.keys.toList();
                     selectedGu = null;
                     _guController.text = '';
                   });
                 },
-                hint: const Text('시를 선택해주세요.'),
+                hint: const Text('시를 선택해주세요.(필수)'),
               ),
             ),
             const SizedBox(height: 16),
             // 구
-            Center(
-              child: DropdownButton<String>(
-                value: selectedGu,
-                items: selectedGuList?.map((String gu) {
-                  return DropdownMenuItem<String>(
-                    value: gu,
-                    child: Text(gu),
-                  );
-                }).toList(),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    selectedGu = newValue;
-                    _guController.text = newValue!;
-                  });
-                },
-                hint: const Text('구를 선택해주세요.(선택)'),
-              ),
-            ),
+Center(
+  child: DropdownButton<String>(
+    value: selectedGu,
+    items: selectedGuList?.map((String gu) {
+      return DropdownMenuItem<String>(
+        value: gu,
+        child: Text(gu),
+      );
+    }).toList(),
+    onChanged: (String? newValue) {
+      setState(() {
+        selectedGu = newValue;
+        _guController.text = newValue!;
+        selectedDongList = locations[selectedSi]?[newValue];
+        selectedDong = null; // 동 선택 초기화
+      });
+    },
+    hint: const Text('구를 선택해주세요.(필수)'),
+  ),
+),
+const SizedBox(height: 16),
+// 동
+Center(
+  child: DropdownButton<String>(
+    value: selectedDong,
+    items: selectedDongList?.map((String dong) {
+      return DropdownMenuItem<String>(
+        value: dong,
+        child: Text(dong),
+      );
+    }).toList(),
+    onChanged: (String? newValue) {
+      setState(() {
+        selectedDong = newValue;
+      });
+    },
+    hint: const Text('동을 선택해주세요.(선택)'),
+  ),
+),
             const SizedBox(height: 16),
             // 인원
             Center(
               child: DropdownButton<int>(
                 value: selectedPeopleCount,
-                items: [2, 3, 4].map((int person) {
+                items: [1, 2, 3].map((int person) {
                   return DropdownMenuItem<int>(
                     value: person,
                     child: Text('$person명'),
@@ -146,7 +190,7 @@ class _NowPlusPageState extends State<NowPlusPage> {
                     _personController.text = '$newValue명';
                   });
                 },
-                hint: const Text('인원을 선택해주세요.'),
+                hint: const Text('함께할 친구 수를 선택해주세요.(필수)'),
               ),
             ),
             const SizedBox(height: 16),
@@ -158,20 +202,32 @@ class _NowPlusPageState extends State<NowPlusPage> {
                       }
                       return Column(
                         children: [
-                          GestureDetector(
-                            onTap: () {
-                              _showFriendPicker(index);
-                            },
-                            child: AbsorbPointer(
-                              child: TextField(
-                                controller: _controllers[index],
-                                decoration: InputDecoration(
-                                  labelText: '${index + 1}번째 친구',
-                                  hintText: '닉네임을 입력해주세요.',
-                                ),
-                              ),
-                            ),
-                          ),
+                          // 변경 후
+Container(
+  height: 50, // 원하는 높이로 조절하세요.
+  decoration: BoxDecoration(
+    border: Border.all(color: Colors.grey),
+    borderRadius: BorderRadius.circular(8.0),
+  ),
+  child: GestureDetector(
+    onTap: () {
+      _showFriendPicker(index);
+    },
+    child: AbsorbPointer(
+      child: _controllers[index].text.isEmpty // 해당 인덱스의 컨트롤러의 텍스트가 비어있다면 힌트 텍스트를 표시
+          ? const Center(child: Text("친구를 선택해주세요."))
+          : TextField(
+              controller: _controllers[index],
+              decoration: InputDecoration(
+                border: InputBorder.none, // 기존의 border를 제거
+                labelText: '${index + 1}번째 친구',
+                hintText: '닉네임을 입력해주세요.',
+              ),
+            ),
+    ),
+  ),
+)
+,
                           const SizedBox(height: 16),
                         ],
                       );
@@ -187,14 +243,21 @@ class _NowPlusPageState extends State<NowPlusPage> {
                   borderRadius: BorderRadius.circular(20),
                 ),
               ),
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const InNow()),
-                );
-              },
-              child: const Text('등록하기'),
-            ),
+             onPressed: () {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => InNow(
+          si: selectedSi,
+          gu: selectedGu,
+          dong: selectedDong,
+          friends: _controllers.map((e) => e.text).toList(),
+        ),
+      ),
+    );
+  },
+  child: const Text('등록하기'),
+),
           ],
         ),
       ),

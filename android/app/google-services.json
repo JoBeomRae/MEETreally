@@ -7,6 +7,42 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:486814867638:android:a928886e9cf560e8ab4617",
+        "android_client_info": {
+          "package_name": "com.company.meet"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "486814867638-i2gs8rb8dcre1hal9s77fbfhrsgu3dqd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0y9zXC-pzJ1ZBdayz4rhaocT3rZKDkQk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "486814867638-i2gs8rb8dcre1hal9s77fbfhrsgu3dqd.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "486814867638-fm0ml15bt96vi1k2ees7qgp5t667b234.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.meet"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:486814867638:android:c5d02b65fa36c601ab4617",
         "android_client_info": {
           "package_name": "com.example.meet"

@@ -1,63 +1,92 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:meet/now/nowplus.dart';
+import 'package:logger/logger.dart';
+
+var logger = Logger();
 
 class InNow extends StatefulWidget {
-  final String? si;
-  final String? gu;
-  final String? dong;
-  final List<String?>? friends;
-
-  const InNow({
-    Key? key,
-    this.si,
-    this.gu,
-    this.dong,
-    this.friends,
-  }) : super(key: key);
+  const InNow({super.key});
 
   @override
   _InNowPageState createState() => _InNowPageState();
 }
 
 class _InNowPageState extends State<InNow> {
+  User? user;
+  Map<String, dynamic>? userInfo; // 로그인한 사용자의 정보를 저장하는 변수
+  String? si;
+  String? gu;
+  String? dong;
+  List<String>? friends;
+
+  @override
+  void initState() {
+    super.initState();
+
+    user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      fetchUserInfo(user!);
+    }
+  }
+
+  Future<void> fetchUserInfo(User user) async {
+    DocumentSnapshot doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get();
+    setState(() {
+      userInfo = doc.data() as Map<String, dynamic>?;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: const Text(
-          '실시간',
-          style: TextStyle(color: Colors.black),
-        ),
-        elevation: 0,
+        title: const Text('InNow'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: Center(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('시: ${widget.si ?? '선택되지 않음'}'),
-            Text('구: ${widget.gu ?? '선택되지 않음'}'),
-            Text('동: ${widget.dong ?? '선택되지 않음'}'),
-            const SizedBox(height: 16),
-            const Text('친구들:'),
-            ...?widget.friends?.map((friend) => Text(friend ?? '이름 없음')),
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            if (userInfo != null) ...[
+              Text(
+                "멤버: ${userInfo!['nickname']} (${userInfo!['age']}, ${userInfo!['job']})"
+                "${friends != null && friends!.isNotEmpty ? ', ${friends!.join(', ')}' : ''}",
+                textAlign: TextAlign.center,
+              ),
+            ],
+            if (si != null || gu != null || dong != null) ...[
+              const SizedBox(height: 20),
+              Text('지역: ${si ?? ''} ${gu ?? ''} ${dong ?? ''}'),
+            ],
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
+        onPressed: () async {
+          final result = await Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const NowPlusPage()),
-          ).then((result) {
-            if (result != null) {
-              setState(() {
-                // result에서 필요한 데이터를 추출하여 현재 페이지 업데이트
-              });
-            }
-          });
+          );
+
+          if (result != null) {
+            Map<String, dynamic> returnedData = result;
+
+            setState(() {
+              si = returnedData['si'];
+              gu = returnedData['gu'];
+              dong = returnedData['dong'];
+              friends = List<String>.from(returnedData['friends'] ?? []);
+            });
+
+            logger.i(si);
+            logger.i(gu);
+            logger.i(dong);
+            logger.i(friends);
+          }
         },
         child: const Icon(Icons.add),
       ),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:meet/now/innow.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class NowPlusPage extends StatefulWidget {
@@ -15,13 +14,14 @@ class _NowPlusPageState extends State<NowPlusPage> {
   final TextEditingController _personController = TextEditingController();
   final List<TextEditingController> _controllers = [];
 
- Map<String, Map<String, List<String>>> locations = {
-  '서울특별시': {
-    '종로구': ['청운동', '효자동', '사직동'], // 예시 동 데이터입니다. 원하는대로 수정하세요.
-    '중구': ['을지로동', '명동', '필동'],
-  },   
-   '부산광역시': {
-    '읍부' : ['동1','동2'], },
+  Map<String, Map<String, List<String>>> locations = {
+    '서울특별시': {
+      '종로구': ['청운동', '효자동', '사직동'], // 예시 동 데이터입니다. 원하는대로 수정하세요.
+      '중구': ['을지로동', '명동', '필동'],
+    },
+    '부산광역시': {
+      '읍부': ['동1', '동2'],
+    },
   };
 
   String? selectedSi;
@@ -30,9 +30,9 @@ class _NowPlusPageState extends State<NowPlusPage> {
   String? selectedPeople;
   int? selectedPeopleCount;
   String? selectedDong;
-List<String>? selectedDongList;
+  List<String>? selectedDongList;
 
- void _showFriendPicker(int index) {
+  void _showFriendPicker(int index) {
     showModalBottomSheet(
         context: context,
         builder: (BuildContext context) {
@@ -60,14 +60,17 @@ List<String>? selectedDongList;
 
                           // 닉네임, 나이, 직업 정보를 가져옴
                           final nickname = friendData['nickname'];
-                          final age = friendData['age'];  // 'age' 필드명은 실제 데이터베이스 구조에 따라 다를 수 있습니다.
-                          final job = friendData['job'];  // 'job' 필드명도 실제 데이터베이스 구조에 따라 다를 수 있습니다.
+                          final age = friendData[
+                              'age']; // 'age' 필드명은 실제 데이터베이스 구조에 따라 다를 수 있습니다.
+                          final job = friendData[
+                              'job']; // 'job' 필드명도 실제 데이터베이스 구조에 따라 다를 수 있습니다.
 
                           return ListTile(
                             title: Text('$nickname ($age, $job)'),
                             onTap: () {
                               setState(() {
-                                _controllers[index].text = '$nickname ($age, $job)';
+                                _controllers[index].text =
+                                    '$nickname ($age, $job)';
                               });
                               Navigator.pop(context);
                             },
@@ -81,19 +84,18 @@ List<String>? selectedDongList;
             ),
           );
         });
-}
-
-
-@override
-void dispose() {
-  _siController.dispose();
-  _guController.dispose();
-  _personController.dispose();
-  for (var controller in _controllers) {
-    controller.dispose();
   }
-  super.dispose();
-}
+
+  @override
+  void dispose() {
+    _siController.dispose();
+    _guController.dispose();
+    _personController.dispose();
+    for (var controller in _controllers) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +126,7 @@ void dispose() {
                   setState(() {
                     selectedSi = newValue;
                     _siController.text = newValue!;
-selectedGuList = locations[newValue]?.keys.toList();
+                    selectedGuList = locations[newValue]?.keys.toList();
                     selectedGu = null;
                     _guController.text = '';
                   });
@@ -134,45 +136,45 @@ selectedGuList = locations[newValue]?.keys.toList();
             ),
             const SizedBox(height: 16),
             // 구
-Center(
-  child: DropdownButton<String>(
-    value: selectedGu,
-    items: selectedGuList?.map((String gu) {
-      return DropdownMenuItem<String>(
-        value: gu,
-        child: Text(gu),
-      );
-    }).toList(),
-    onChanged: (String? newValue) {
-      setState(() {
-        selectedGu = newValue;
-        _guController.text = newValue!;
-        selectedDongList = locations[selectedSi]?[newValue];
-        selectedDong = null; // 동 선택 초기화
-      });
-    },
-    hint: const Text('구를 선택해주세요.(필수)'),
-  ),
-),
-const SizedBox(height: 16),
+            Center(
+              child: DropdownButton<String>(
+                value: selectedGu,
+                items: selectedGuList?.map((String gu) {
+                  return DropdownMenuItem<String>(
+                    value: gu,
+                    child: Text(gu),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    selectedGu = newValue;
+                    _guController.text = newValue!;
+                    selectedDongList = locations[selectedSi]?[newValue];
+                    selectedDong = null; // 동 선택 초기화
+                  });
+                },
+                hint: const Text('구를 선택해주세요.(필수)'),
+              ),
+            ),
+            const SizedBox(height: 16),
 // 동
-Center(
-  child: DropdownButton<String>(
-    value: selectedDong,
-    items: selectedDongList?.map((String dong) {
-      return DropdownMenuItem<String>(
-        value: dong,
-        child: Text(dong),
-      );
-    }).toList(),
-    onChanged: (String? newValue) {
-      setState(() {
-        selectedDong = newValue;
-      });
-    },
-    hint: const Text('동을 선택해주세요.(선택)'),
-  ),
-),
+            Center(
+              child: DropdownButton<String>(
+                value: selectedDong,
+                items: selectedDongList?.map((String dong) {
+                  return DropdownMenuItem<String>(
+                    value: dong,
+                    child: Text(dong),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    selectedDong = newValue;
+                  });
+                },
+                hint: const Text('동을 선택해주세요.(선택)'),
+              ),
+            ),
             const SizedBox(height: 16),
             // 인원
             Center(
@@ -203,31 +205,33 @@ Center(
                       return Column(
                         children: [
                           // 변경 후
-Container(
-  height: 50, // 원하는 높이로 조절하세요.
-  decoration: BoxDecoration(
-    border: Border.all(color: Colors.grey),
-    borderRadius: BorderRadius.circular(8.0),
-  ),
-  child: GestureDetector(
-    onTap: () {
-      _showFriendPicker(index);
-    },
-    child: AbsorbPointer(
-      child: _controllers[index].text.isEmpty // 해당 인덱스의 컨트롤러의 텍스트가 비어있다면 힌트 텍스트를 표시
-          ? const Center(child: Text("친구를 선택해주세요."))
-          : TextField(
-              controller: _controllers[index],
-              decoration: InputDecoration(
-                border: InputBorder.none, // 기존의 border를 제거
-                labelText: '${index + 1}번째 친구',
-                hintText: '닉네임을 입력해주세요.',
-              ),
-            ),
-    ),
-  ),
-)
-,
+                          Container(
+                            height: 50, // 원하는 높이로 조절하세요.
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            child: GestureDetector(
+                              onTap: () {
+                                _showFriendPicker(index);
+                              },
+                              child: AbsorbPointer(
+                                child: _controllers[index]
+                                        .text
+                                        .isEmpty // 해당 인덱스의 컨트롤러의 텍스트가 비어있다면 힌트 텍스트를 표시
+                                    ? const Center(child: Text("친구를 선택해주세요."))
+                                    : TextField(
+                                        controller: _controllers[index],
+                                        decoration: InputDecoration(
+                                          border: InputBorder
+                                              .none, // 기존의 border를 제거
+                                          labelText: '${index + 1}번째 친구',
+                                          hintText: '닉네임을 입력해주세요.',
+                                        ),
+                                      ),
+                              ),
+                            ),
+                          ),
                           const SizedBox(height: 16),
                         ],
                       );
@@ -243,21 +247,18 @@ Container(
                   borderRadius: BorderRadius.circular(20),
                 ),
               ),
-             onPressed: () {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => InNow(
-          si: selectedSi,
-          gu: selectedGu,
-          dong: selectedDong,
-          friends: _controllers.map((e) => e.text).toList(),
-        ),
-      ),
-    );
-  },
-  child: const Text('등록하기'),
-),
+              onPressed: () {
+                var dataToReturn = {
+                  'si': selectedSi,
+                  'gu': selectedGu,
+                  'dong': selectedDong,
+                  'friends': _controllers.map((e) => e.text).toList(),
+                };
+
+                Navigator.pop(context, dataToReturn);
+              },
+              child: const Text('등록하기'),
+            ),
           ],
         ),
       ),

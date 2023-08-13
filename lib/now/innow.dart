@@ -20,42 +20,47 @@ class InNow extends StatefulWidget {
 }
 
 class _InNowPageState extends State<InNow> {
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-    backgroundColor: Colors.white,
-    appBar: AppBar(
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
       backgroundColor: Colors.white,
-      title: const Text(
-        '실시간',
-        style: TextStyle(color: Colors.black),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        title: const Text(
+          '실시간',
+          style: TextStyle(color: Colors.black),
+        ),
+        elevation: 0,
       ),
-      elevation: 0,
-    ),
-    body: Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('시: ${widget.si ?? '선택되지 않음'}'),
-          Text('구: ${widget.gu ?? '선택되지 않음'}'),
-          Text('동: ${widget.dong ?? '선택되지 않음'}'),
-          const SizedBox(height: 16),
-          const Text('친구들:'),
-          ...?widget.friends?.map((friend) => Text(friend ?? '이름 없음')),
-        ],
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('시: ${widget.si ?? '선택되지 않음'}'),
+            Text('구: ${widget.gu ?? '선택되지 않음'}'),
+            Text('동: ${widget.dong ?? '선택되지 않음'}'),
+            const SizedBox(height: 16),
+            const Text('친구들:'),
+            ...?widget.friends?.map((friend) => Text(friend ?? '이름 없음')),
+          ],
+        ),
       ),
-    ),
-    floatingActionButton: FloatingActionButton(
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const NowPlusPage()),
-        );
-      },
-      child: const Icon(Icons.add),
-    ),
-  );
-}
-
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const NowPlusPage()),
+          ).then((result) {
+            if (result != null) {
+              setState(() {
+                // result에서 필요한 데이터를 추출하여 현재 페이지 업데이트
+              });
+            }
+          });
+        },
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
 }

@@ -15,11 +15,12 @@ class InNow extends StatefulWidget {
 
 class _InNowPageState extends State<InNow> {
   User? user;
-  Map<String, dynamic>? userInfo; // 로그인한 사용자의 정보를 저장하는 변수
+  Map<String, dynamic>? userInfo;
   String? si;
   String? gu;
   String? dong;
   List<String>? friends;
+  bool isDataFetched = false;
 
   @override
   void initState() {
@@ -51,14 +52,15 @@ class _InNowPageState extends State<InNow> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            if (userInfo != null) ...[
+            if (isDataFetched && userInfo != null) ...[
               Text(
                 "멤버: ${userInfo!['nickname']} (${userInfo!['age']}, ${userInfo!['job']})"
                 "${friends != null && friends!.isNotEmpty ? ', ${friends!.join(', ')}' : ''}",
                 textAlign: TextAlign.center,
               ),
             ],
-            if (si != null || gu != null || dong != null) ...[
+            if (isDataFetched &&
+                (si != null || gu != null || dong != null)) ...[
               const SizedBox(height: 20),
               Text('지역: ${si ?? ''} ${gu ?? ''} ${dong ?? ''}'),
             ],
@@ -80,6 +82,7 @@ class _InNowPageState extends State<InNow> {
               gu = returnedData['gu'];
               dong = returnedData['dong'];
               friends = List<String>.from(returnedData['friends'] ?? []);
+              isDataFetched = true;
             });
 
             logger.i(si);

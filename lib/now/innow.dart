@@ -134,6 +134,7 @@ class _InNowPageState extends State<InNow> {
               );
 
               if (result != null) {
+                // ignore: use_build_context_synchronously
                 Provider.of<UserData>(context, listen: false)
                     .updateUserData(result);
 

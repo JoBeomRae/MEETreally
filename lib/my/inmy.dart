@@ -40,41 +40,72 @@ class _InMyState extends State<InMy> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          if (userInfo != null) ...[
-            Text("닉네임: ${userInfo!['nickname']}"),
-            Text("이름: ${userInfo!['name']}"),
-            Text("나이: ${userInfo!['age'].toString()}"),
-            Text("직업: ${userInfo!['job']}"),
-          ] else ...[
-            const Text("정보를 가져오는 중..."),
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              '마이페이지', // "마이페이지" 텍스트 추가
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset('assets/rlagusrb.png'),
+                  const SizedBox(height: 20),
+                  if (userInfo != null) ...[
+                    Text("${userInfo!['nickname']}",
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 40)),
+                    Text(
+                        "${userInfo!['name']} (${userInfo!['age'].toString()})"),
+                    Text("${userInfo!['job']}"),
+                  ] else ...[
+                    const Text("정보를 가져오는 중..."),
+                  ],
+                  const SizedBox(height: 20),
+                  MaterialButton(
+                    color: Colors.black,
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const MyFeedPage()),
+                      );
+                    },
+                    child: const Text(
+                      '내 피드 보러가기',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  MaterialButton(
+                    color: Colors.black,
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const FriendList()),
+                      );
+                    },
+                    child: const Text(
+                      '친구목록 보기',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
-          const SizedBox(height: 20),
-          MaterialButton(
-            color: Colors.blue,
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const MyFeedPage()),
-              );
-            },
-            child: const Text('내 피드 보러가기'),
-          ),
-          const SizedBox(height: 20),
-          MaterialButton(
-            color: Colors.orange,
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const FriendList()),
-              );
-            },
-            child: const Text('친구목록 보기'),
-          ),
-        ],
+        ),
       ),
     );
   }

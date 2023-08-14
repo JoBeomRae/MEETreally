@@ -1,12 +1,13 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:meet/signup/page1.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:meet/now/in_now_model.dart'; // InNowModel을 import 합니다.
 import 'firebase_options.dart';
+import 'dart:async';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // Firebase 초기화 전에 반드시 호출
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -19,9 +20,13 @@ class MeetApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: SplashScreen(),
+    // 최상위 위젯에서 ChangeNotifierProvider를 사용하여 InNowModel을 제공합니다.
+    return ChangeNotifierProvider(
+      create: (context) => InNow(),
+      child: const MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: SplashScreen(),
+      ),
     );
   }
 }
@@ -44,12 +49,12 @@ class SplashScreenState extends State<SplashScreen> {
   }
 
   @override
-Widget build(BuildContext context) {
-  return Scaffold(
-    backgroundColor: const Color.fromARGB(255, 255, 255, 255), // 16진수 색상 값으로 배경색 설정
-    body: Center(
-      child: Image.asset('assets/MEET.png'),
-    ),
-  );
-}
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+      body: Center(
+        child: Image.asset('assets/MEET.png'),
+      ),
+    );
+  }
 }

@@ -46,39 +46,58 @@ class _InNowPageState extends State<InNow> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('InNow'),
-      ),
-      body: Center(
+      // AppBar 삭제
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            if (isDataFetched && userInfo != null) ...[
-              InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const FeedPage()),
-                  );
-                },
-                child: Column(
-                  children: <Widget>[
-                    if (isDataFetched && userInfo != null) ...[
-                      Text(
-                        "멤버: ${userInfo!['nickname']} (${userInfo!['age']}, ${userInfo!['job']})"
-                        "${friends != null && friends!.isNotEmpty ? ', ${friends!.join(', ')}' : ''}",
-                        textAlign: TextAlign.center,
+          crossAxisAlignment: CrossAxisAlignment.start, // 왼쪽 정렬
+          children: [
+            // "실시간" 텍스트 추가
+            const Text(
+              '실시간',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
+            const SizedBox(height: 20), // "실시간" 텍스트와 다른 요소들 사이에 간격을 추가
+
+            // 기존의 코드
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  if (isDataFetched && userInfo != null) ...[
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const FeedPage()),
+                        );
+                      },
+                      child: Column(
+                        children: <Widget>[
+                          if (isDataFetched && userInfo != null) ...[
+                            Text(
+                              "멤버: ${userInfo!['nickname']} (${userInfo!['age']}, ${userInfo!['job']})"
+                              "${friends != null && friends!.isNotEmpty ? ', ${friends!.join(', ')}' : ''}",
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                          if (isDataFetched &&
+                              (si != null || gu != null || dong != null)) ...[
+                            const SizedBox(height: 20),
+                            Text('지역: ${si ?? ''} ${gu ?? ''} ${dong ?? ''}'),
+                          ],
+                        ],
                       ),
-                    ],
-                    if (isDataFetched &&
-                        (si != null || gu != null || dong != null)) ...[
-                      const SizedBox(height: 20),
-                      Text('지역: ${si ?? ''} ${gu ?? ''} ${dong ?? ''}'),
-                    ],
+                    )
                   ],
-                ),
-              )
-            ],
+                ],
+              ),
+            ),
           ],
         ),
       ),

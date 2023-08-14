@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:meet/now/nowplus.dart';
 import 'package:logger/logger.dart';
+import 'package:meet/now/feed.dart';
 
 var logger = Logger();
 
@@ -53,16 +54,30 @@ class _InNowPageState extends State<InNow> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             if (isDataFetched && userInfo != null) ...[
-              Text(
-                "멤버: ${userInfo!['nickname']} (${userInfo!['age']}, ${userInfo!['job']})"
-                "${friends != null && friends!.isNotEmpty ? ', ${friends!.join(', ')}' : ''}",
-                textAlign: TextAlign.center,
-              ),
-            ],
-            if (isDataFetched &&
-                (si != null || gu != null || dong != null)) ...[
-              const SizedBox(height: 20),
-              Text('지역: ${si ?? ''} ${gu ?? ''} ${dong ?? ''}'),
+              InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const FeedPage()),
+                  );
+                },
+                child: Column(
+                  children: <Widget>[
+                    if (isDataFetched && userInfo != null) ...[
+                      Text(
+                        "멤버: ${userInfo!['nickname']} (${userInfo!['age']}, ${userInfo!['job']})"
+                        "${friends != null && friends!.isNotEmpty ? ', ${friends!.join(', ')}' : ''}",
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                    if (isDataFetched &&
+                        (si != null || gu != null || dong != null)) ...[
+                      const SizedBox(height: 20),
+                      Text('지역: ${si ?? ''} ${gu ?? ''} ${dong ?? ''}'),
+                    ],
+                  ],
+                ),
+              )
             ],
           ],
         ),

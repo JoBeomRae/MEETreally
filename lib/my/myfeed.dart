@@ -37,22 +37,25 @@ class _MyFeedPageState extends State<MyFeedPage> {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.only(top: 50.0, left: 30.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Row(
+                // Row 위젯 추가
                 children: [
                   IconButton(
                     icon: const Icon(
-                      Icons.arrow_back, // 뒤로가기 버튼 아이콘
-                      color: Colors.black, // 아이콘의 색상을 검은색으로 설정
+                      Icons.arrow_back,
+                      color: Colors.black,
                     ),
-                    onPressed: () => Navigator.pop(context), // 뒤로가기 기능
+                    onPressed: () => Navigator.pop(context),
                   ),
+                  const SizedBox(width: 20), // 아이콘과 텍스트 사이의 간격
                   if (userInfo != null) ...[
                     const Text(
-                      "My Feed", // 로그인한 사람의 닉네임 표시
+                      "My Feed",
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -61,7 +64,12 @@ class _MyFeedPageState extends State<MyFeedPage> {
                   ],
                 ],
               ),
-              // 나머지 부분의 UI와 기능은 여기에 추가하십시오.
+              const SizedBox(height: 20),
+              const Divider(
+                color: Colors.black,
+                thickness: 1,
+              ),
+              const SizedBox(height: 20),
             ],
           ),
         ),

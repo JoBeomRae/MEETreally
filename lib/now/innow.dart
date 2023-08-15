@@ -75,7 +75,9 @@ class _InNowPageState extends State<InNow> {
       builder: (context, userData, child) {
         return Scaffold(
           body: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.only(
+                top: 50.0, left: 30), // 공간을 두려면 이 줄을 사용하세요.
+
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

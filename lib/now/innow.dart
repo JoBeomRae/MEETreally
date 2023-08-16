@@ -107,8 +107,7 @@ class _InNowPageState extends State<InNow> {
                           child: Column(
                             children: <Widget>[
                               Text(
-                                "멤버: ${userData.userInfo!['nickname']} (${userData.userInfo!['age']}, ${userData.userInfo!['job']})"
-                                "${userData.friends != null && userData.friends!.isNotEmpty ? ', ${userData.friends!.join(', ')}' : ''}",
+                                "멤버: ${userData.friends != null ? userData.friends!.join(', ') : ''}",
                                 textAlign: TextAlign.center,
                               ),
                               if (userData.si != null ||

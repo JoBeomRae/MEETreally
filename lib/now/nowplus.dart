@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class NowPlusPage extends StatefulWidget {
   const NowPlusPage({Key? key}) : super(key: key);
@@ -40,7 +41,35 @@ class _NowPlusPageState extends State<NowPlusPage> {
             height: MediaQuery.of(context).size.height * 0.5,
             child: Column(
               children: [
-                const Text('친구를 선택하세요.'),
+                StreamBuilder<DocumentSnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection('users')
+                      .doc(FirebaseAuth
+                          .instance.currentUser?.uid) // 현재 사용자의 ID를 가져옵니다.
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    final userData =
+                        snapshot.data!.data() as Map<String, dynamic>;
+                    final userNickname = userData['nickname'];
+                    final userAge = userData['age'];
+                    final userJob = userData['job'];
+
+                    return ListTile(
+                      title: Text('$userNickname ($userAge, $userJob)'),
+                      onTap: () {
+                        setState(() {
+                          _controllers[index].text =
+                              '$userNickname ($userAge, $userJob)';
+                        });
+                        Navigator.pop(context);
+                      },
+                    );
+                  },
+                ),
                 Expanded(
                   child: StreamBuilder<QuerySnapshot>(
                     stream: FirebaseFirestore.instance
@@ -58,12 +87,9 @@ class _NowPlusPageState extends State<NowPlusPage> {
                           final friendData =
                               friends[position].data() as Map<String, dynamic>;
 
-                          // 닉네임, 나이, 직업 정보를 가져옴
                           final nickname = friendData['nickname'];
-                          final age = friendData[
-                              'age']; // 'age' 필드명은 실제 데이터베이스 구조에 따라 다를 수 있습니다.
-                          final job = friendData[
-                              'job']; // 'job' 필드명도 실제 데이터베이스 구조에 따라 다를 수 있습니다.
+                          final age = friendData['age'];
+                          final job = friendData['job'];
 
                           return ListTile(
                             title: Text('$nickname ($age, $job)'),

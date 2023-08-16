@@ -68,6 +68,7 @@ flutter:
     assets:      # 들여쓰기를 수정하였습니다.
     - assets/MEET.png
     - assets/rlagusrb.png
+    - assets/dlstmxk.png
     uses-material-design: true
 
   # The following line ensures that the Material Icons font is

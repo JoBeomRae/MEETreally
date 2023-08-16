@@ -97,6 +97,7 @@ class _FriendListState extends State<FriendList> {
         appBar: null,
         body: Column(
           children: [
+            const SizedBox(height: 70), // 여기에 간격을 추가
             if (loggedInUser != null) ...[
               ListTile(
                 title: Text('닉네임: ${loggedInUser!.nickname}'),

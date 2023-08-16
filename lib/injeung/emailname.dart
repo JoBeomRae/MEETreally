@@ -29,6 +29,8 @@ class _EmailNamePageState extends State<EmailNamePage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            const SizedBox(height: 50), // 여기에 간격을 추가
+
             // 이메일 입력
             TextField(
               controller: _emailController,
@@ -36,9 +38,9 @@ class _EmailNamePageState extends State<EmailNamePage> {
                 labelText: '이메일 *',
                 labelStyle: TextStyle(color: Colors.black), // 라벨 텍스트를 검은색으로 설정
                 hintText: '이메일을 입력하세요',
-                  focusedBorder: OutlineInputBorder(
-    borderSide: BorderSide(color: Colors.black, width: 1.0),
-  ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.black, width: 1.0),
+                ),
               ),
             ),
             const SizedBox(height: 16),
@@ -50,8 +52,8 @@ class _EmailNamePageState extends State<EmailNamePage> {
                 labelStyle: TextStyle(color: Colors.black),
                 hintText: '비밀번호를 입력하세요',
                 focusedBorder: OutlineInputBorder(
-    borderSide: BorderSide(color: Colors.black, width: 1.0),
-  ),
+                  borderSide: BorderSide(color: Colors.black, width: 1.0),
+                ),
               ),
               obscureText: true,
             ),
@@ -64,8 +66,8 @@ class _EmailNamePageState extends State<EmailNamePage> {
                 labelStyle: TextStyle(color: Colors.black),
                 hintText: '닉네임을 입력하세요',
                 focusedBorder: OutlineInputBorder(
-    borderSide: BorderSide(color: Colors.black, width: 1.0),
-  ),
+                  borderSide: BorderSide(color: Colors.black, width: 1.0),
+                ),
               ),
             ),
             TextField(
@@ -75,8 +77,8 @@ class _EmailNamePageState extends State<EmailNamePage> {
                 labelStyle: TextStyle(color: Colors.black),
                 hintText: '이름을 입력하세요',
                 focusedBorder: OutlineInputBorder(
-    borderSide: BorderSide(color: Colors.black, width: 1.0),
-  ),
+                  borderSide: BorderSide(color: Colors.black, width: 1.0),
+                ),
               ),
             ),
             const SizedBox(height: 16),
@@ -88,8 +90,8 @@ class _EmailNamePageState extends State<EmailNamePage> {
                 labelStyle: TextStyle(color: Colors.black),
                 hintText: '나이를 입력하세요',
                 focusedBorder: OutlineInputBorder(
-    borderSide: BorderSide(color: Colors.black, width: 1.0),
-  ),
+                  borderSide: BorderSide(color: Colors.black, width: 1.0),
+                ),
               ),
               keyboardType: TextInputType.number,
             ),
@@ -102,8 +104,8 @@ class _EmailNamePageState extends State<EmailNamePage> {
                 labelStyle: TextStyle(color: Colors.black),
                 hintText: '직업을 입력하세요',
                 focusedBorder: OutlineInputBorder(
-    borderSide: BorderSide(color: Colors.black, width: 1.0),
-  ),
+                  borderSide: BorderSide(color: Colors.black, width: 1.0),
+                ),
               ),
             ),
             const SizedBox(height: 16),
@@ -116,7 +118,8 @@ class _EmailNamePageState extends State<EmailNamePage> {
                   backgroundColor: const Color.fromARGB(255, 0, 0, 0),
                   foregroundColor: const Color.fromARGB(255, 255, 255, 255),
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20)),
                 ),
                 child: const Text(
                   '계속하기',
@@ -132,7 +135,8 @@ class _EmailNamePageState extends State<EmailNamePage> {
 
   Future<void> _registerAccount(BuildContext context) async {
     try {
-      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+      UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
         email: _emailController.text,
         password: _passwordController.text,
       );

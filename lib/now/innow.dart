@@ -76,7 +76,7 @@ class _InNowPageState extends State<InNow> {
         return Scaffold(
           body: Padding(
             padding: const EdgeInsets.only(
-                top: 50.0, left: 30), // 공간을 두려면 이 줄을 사용하세요.
+                top: 80.0, left: 20), // 공간을 두려면 이 줄을 사용하세요.
 
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -89,7 +89,7 @@ class _InNowPageState extends State<InNow> {
                     color: Colors.black,
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 50),
                 Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,

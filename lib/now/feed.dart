@@ -1,9 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:meet/now/innow.dart'; // 실제 파일 경로에 맞게 수정하세요.
+import 'package:meet/my/myfeed.dart'; // 실제 파일 경로에 맞게 수정하세요.
 
 class FeedPage extends StatelessWidget {
   const FeedPage({Key? key}) : super(key: key);
+
+  String extractNickname(String fullName) {
+    int idx = fullName.indexOf('(');
+    if (idx != -1) {
+      return fullName.substring(0, idx).trim();
+    } else {
+      return fullName;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +29,6 @@ class FeedPage extends StatelessWidget {
             Navigator.of(context).pop(); // 화면 닫기
           },
         ),
-        // title: const Text('피드'), // 타이틀 제거
       ),
       backgroundColor: Colors.white, // 배경색을 흰색으로 설정
       body: Consumer<UserData>(
@@ -38,8 +47,14 @@ class FeedPage extends StatelessWidget {
                     children: [
                       InkWell(
                         onTap: () {
-                          _showFriendInfoDialog(
-                              context, selectedFriends[i]); // 친구 정보 다이얼로그 띄우기
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MyFeedPage(
+                                  nickname:
+                                      extractNickname(selectedFriends[i])),
+                            ),
+                          );
                         },
                         child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 15.0),
@@ -52,7 +67,7 @@ class FeedPage extends StatelessWidget {
                               ),
                               const SizedBox(width: 50),
                               Text(
-                                selectedFriends[i],
+                                extractNickname(selectedFriends[i]),
                                 style: const TextStyle(fontSize: 20),
                               ),
                             ],
@@ -82,27 +97,6 @@ class FeedPage extends StatelessWidget {
           );
         },
       ),
-    );
-  }
-
-  // 친구 정보 다이얼로그를 띄우는 함수
-  void _showFriendInfoDialog(BuildContext context, String friendName) {
-    showDialog(
-      context: context,
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: const Text('친구 정보'),
-          content: Text('선택한 친구: $friendName'), // 친구의 정보를 여기에 추가
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(dialogContext).pop(); // 다이얼로그 닫기
-              },
-              child: const Text('닫기'),
-            ),
-          ],
-        );
-      },
     );
   }
 }

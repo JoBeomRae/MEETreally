@@ -126,7 +126,10 @@ class _InMyState extends State<InMy> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const MyFeedPage()),
+                          builder: (context) => MyFeedPage(
+                            nickname: userInfo!['nickname'], // 수정된 코드
+                          ),
+                        ),
                       );
                     },
                     child: const Text(

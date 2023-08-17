@@ -5,10 +5,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image/image.dart' as img;
+
 import 'package:photo_view/photo_view.dart'; // 추가
 
 class MyFeedPage extends StatefulWidget {
-  const MyFeedPage({Key? key}) : super(key: key);
+  final String nickname; // 추가된 코드
+  const MyFeedPage({Key? key, required this.nickname})
+      : super(key: key); // 수정된 코드
 
   @override
   _MyFeedPageState createState() => _MyFeedPageState();
@@ -41,11 +44,37 @@ class _MyFeedPageState extends State<MyFeedPage> {
     });
   }
 
+  Future<String> getUidFromNickname(String nickname) async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .where('nickname', isEqualTo: nickname)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      return querySnapshot.docs.first.id;
+    } else {
+      throw Exception("User with nickname $nickname not found");
+    }
+  }
+
   Future loadUploadedImages() async {
+    String targetUid;
+
+    // Get the UID from the nickname provided
+    try {
+      targetUid = await getUidFromNickname(widget.nickname);
+    } catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.toString())));
+      return;
+    }
+
+    // Fetch images for the user with the specified UID
     var images = await FirebaseFirestore.instance
         .collection('uploaded_images')
-        .doc(user!.uid)
+        .doc(targetUid)
         .get();
+
     if (images.data() != null) {
       setState(() {
         uploadedImages.addAll(List<String>.from(images.data()!['images']));
@@ -183,7 +212,7 @@ class _MyFeedPageState extends State<MyFeedPage> {
 class ImageDetailPage extends StatelessWidget {
   final String imageUrl;
 
-  const ImageDetailPage(this.imageUrl, {super.key});
+  const ImageDetailPage(this.imageUrl, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

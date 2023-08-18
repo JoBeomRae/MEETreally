@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:meet/my/friend.dart';
-import 'package:meet/my/myfeed.dart'; // <-- 추가한 코드
+import 'package:meet/my/myfeed.dart';
 import 'package:logger/logger.dart';
 
 final logger = Logger();
@@ -70,64 +70,97 @@ class _InMyState extends State<InMy> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding:
-            const EdgeInsets.only(top: 50.0, left: 30.0), // 여기에 left를 추가하세요.
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              '마이페이지',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
+Widget build(BuildContext context) {
+  return Scaffold(
+    backgroundColor: const Color.fromARGB(255, 231, 237, 251),
+    body: Padding(
+      padding: const EdgeInsets.only(top: 80.0, left: 20.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            '마이페이지',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
             ),
-            const SizedBox(height: 20),
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircleAvatar(
-                    radius: 50,
-                    backgroundImage: _imageURL != null
-                        ? NetworkImage(_imageURL!)
-                        : null, // 기본 이미지를 제거하고 아래의 자식 위젯을 사용
-                    backgroundColor: Colors.black, // 원하는 색상으로 설정
-                    child: _imageURL == null
-                        ? GestureDetector(
-                            onTap: _pickImage, // 아이콘을 눌렀을 때 _pickImage 메소드 호출
-                            child: const Icon(
-                              Icons.add, // '+' 아이콘
-                              size: 40, // 아이콘 크기
-                              color: Colors.white, // 아이콘 색상
-                            ),
-                          )
-                        : null, // 이미지 URL이 있을 경우 아이콘을 표시하지 않음
-                  ),
-                  const SizedBox(height: 20),
-                  if (userInfo != null) ...[
-                    Text("${userInfo!['nickname']}",
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 40)),
-                    Text(
-                        "${userInfo!['name']} (${userInfo!['age'].toString()})"),
-                    Text("${userInfo!['job']}"),
-                  ] else ...[
-                    const Text("정보를 가져오는 중..."),
+          ),
+          const SizedBox(height: 50),
+          Padding(
+            padding: const EdgeInsets.only(top: 10.0, left: 80, bottom: 50.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Stack(
+                  alignment: Alignment.bottomRight,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8.0),
+                      decoration: const BoxDecoration(
+                        color: Color(0xFFFFFFFF),
+                        shape: BoxShape.circle,
+                      ),
+                      child: CircleAvatar(
+                        radius: 88,
+                        backgroundImage: _imageURL != null
+                            ? NetworkImage(_imageURL!)
+                            : null,
+                        backgroundColor: const Color.fromARGB(255, 0, 0, 0),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: GestureDetector(
+                        onTap: _pickImage,
+                        child: Container(
+                          width: 30,
+                          height: 30,
+                          decoration: const BoxDecoration(
+                            color: Color.fromARGB(255, 130, 147, 238),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.add,
+                            size: 20,
+                            color: Color.fromARGB(255, 255, 255, 255),
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
-                  const SizedBox(height: 20),
-                  MaterialButton(
+                ),
+                const SizedBox(height: 20),
+                Container(
+                  padding: const EdgeInsets.only(left: 10.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: userInfo != null
+                        ? [
+                            Text(
+                              "${userInfo!['nickname']}",
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 40)),
+                            Text(
+                                "${userInfo!['name']} (${userInfo!['age'].toString()}) ${userInfo!['job']}"),
+                          ]
+                        : [
+                            const Text("정보를 가져오는 중..."),
+                          ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Container(
+                  padding: const EdgeInsets.only(left: 10.0),
+                  child: MaterialButton(
                     color: Colors.black,
                     onPressed: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => MyFeedPage(
-                            nickname: userInfo!['nickname'], // 수정된 코드
+                            nickname: userInfo!['nickname'],
                           ),
                         ),
                       );
@@ -137,14 +170,18 @@ class _InMyState extends State<InMy> {
                       style: TextStyle(color: Colors.white),
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  MaterialButton(
+                ),
+                const SizedBox(height: 20),
+                Container(
+                  padding: const EdgeInsets.only(left: 10.0),
+                  child: MaterialButton(
                     color: Colors.black,
                     onPressed: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const FriendList()),
+                          builder: (context) => const FriendList(),
+                        ),
                       );
                     },
                     child: const Text(
@@ -152,12 +189,14 @@ class _InMyState extends State<InMy> {
                       style: TextStyle(color: Colors.white),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
+
 }

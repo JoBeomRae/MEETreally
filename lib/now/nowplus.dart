@@ -33,84 +33,104 @@ class _NowPlusPageState extends State<NowPlusPage> {
   String? selectedDong;
   List<String>? selectedDongList;
 
-  void _showFriendPicker(int index) {
-    showModalBottomSheet(
-        context: context,
-        builder: (BuildContext context) {
-          return SizedBox(
-            height: MediaQuery.of(context).size.height * 0.5,
-            child: Column(
-              children: [
-                StreamBuilder<DocumentSnapshot>(
-                  stream: FirebaseFirestore.instance
-                      .collection('users')
-                      .doc(FirebaseAuth
-                          .instance.currentUser?.uid) // 현재 사용자의 ID를 가져옵니다.
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
+  void _showAlert(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('알림'),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('확인'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+  
+void _showFriendPicker(int index) {
+  showModalBottomSheet(
+    context: context,
+    builder: (BuildContext context) {
+      return SizedBox(
+        height: MediaQuery.of(context).size.height * 0.5,
+        child: Column(
+          children: [
+            StreamBuilder<DocumentSnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(FirebaseAuth.instance.currentUser?.uid)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-                    final userData =
-                        snapshot.data!.data() as Map<String, dynamic>;
-                    final userNickname = userData['nickname'];
-                    final userAge = userData['age'];
-                    final userJob = userData['job'];
+                final userData =
+                    snapshot.data!.data() as Map<String, dynamic>;
+                final userNickname = userData['nickname'];
+                final userAge = userData['age'];
+                final userJob = userData['job'];
 
-                    return ListTile(
-                      title: Text('$userNickname ($userAge, $userJob)'),
-                      onTap: () {
-                        setState(() {
-                          _controllers[index].text =
-                              '$userNickname ($userAge, $userJob)';
-                        });
-                        Navigator.pop(context);
-                      },
-                    );
+                return ListTile(
+                  title: Text('$userNickname ($userAge, $userJob)'),
+                  onTap: () {
+                    _selectFriend(index, '$userNickname ($userAge, $userJob)');
                   },
-                ),
-                Expanded(
-                  child: StreamBuilder<QuerySnapshot>(
-                    stream: FirebaseFirestore.instance
-                        .collection('friends')
-                        .snapshots(),
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
+                );
+              },
+            ),
+            Expanded(
+              child: StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance.collection('friends').snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
 
-                      final friends = snapshot.data!.docs;
-                      return ListView.builder(
-                        itemCount: friends.length,
-                        itemBuilder: (context, position) {
-                          final friendData =
-                              friends[position].data() as Map<String, dynamic>;
+                  final friends = snapshot.data!.docs;
+                  return ListView.builder(
+                    itemCount: friends.length,
+                    itemBuilder: (context, position) {
+                      final friendData = friends[position].data() as Map<String, dynamic>;
 
-                          final nickname = friendData['nickname'];
-                          final age = friendData['age'];
-                          final job = friendData['job'];
+                      final nickname = friendData['nickname'];
+                      final age = friendData['age'];
+                      final job = friendData['job'];
 
-                          return ListTile(
-                            title: Text('$nickname ($age, $job)'),
-                            onTap: () {
-                              setState(() {
-                                _controllers[index].text =
-                                    '$nickname ($age, $job)';
-                              });
-                              Navigator.pop(context);
-                            },
-                          );
+                      return ListTile(
+                        title: Text('$nickname ($age, $job)'),
+                        onTap: () {
+                          _selectFriend(index, '$nickname ($age, $job)');
                         },
                       );
                     },
-                  ),
-                ),
-              ],
+                  );
+                },
+              ),
             ),
-          );
-        });
+          ],
+        ),
+      );
+    });
+}
+
+void _selectFriend(int index, String friendName) {
+  if (!_controllers.any((controller) => controller.text == friendName)) {
+    setState(() {
+      _controllers[index].text = friendName;
+    });
+    Navigator.pop(context);
+  } else {
+    _showAlert(context, '이미 선택된 친구입니다. 다른 친구를 선택해주세요.');
   }
+}
+
 
   @override
   void dispose() {
@@ -127,6 +147,8 @@ class _NowPlusPageState extends State<NowPlusPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
+            padding: const EdgeInsets.only(top: 24.0),  // 이 부분을 추가합니다.
+    child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
@@ -254,6 +276,8 @@ class _NowPlusPageState extends State<NowPlusPage> {
                                           labelText: '${index + 1}번째 친구',
                                           hintText: '닉네임을 입력해주세요.',
                                         ),
+                                                        textAlign: TextAlign.center,  // 텍스트 정렬을 중앙으로 설정
+
                                       ),
                               ),
                             ),
@@ -288,6 +312,6 @@ class _NowPlusPageState extends State<NowPlusPage> {
           ],
         ),
       ),
-    );
+    ));
   }
 }

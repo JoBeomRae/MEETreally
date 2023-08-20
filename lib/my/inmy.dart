@@ -88,7 +88,7 @@ Widget build(BuildContext context) {
           ),
           const SizedBox(height: 50),
           Padding(
-            padding: const EdgeInsets.only(top: 10.0, left: 80, bottom: 50.0),
+            padding: const EdgeInsets.only(top: 10.0, left: 60, bottom: 50.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -123,7 +123,7 @@ Widget build(BuildContext context) {
                           ),
                           child: const Icon(
                             Icons.add,
-                            size: 20,
+                            size: 30,
                             color: Color.fromARGB(255, 255, 255, 255),
                           ),
                         ),
@@ -133,7 +133,7 @@ Widget build(BuildContext context) {
                 ),
                 const SizedBox(height: 20),
                 Container(
-                  padding: const EdgeInsets.only(left: 10.0),
+                  padding: const EdgeInsets.only(left: 40.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: userInfo != null
@@ -152,7 +152,7 @@ Widget build(BuildContext context) {
                 ),
                 const SizedBox(height: 20),
                 Container(
-                  padding: const EdgeInsets.only(left: 10.0),
+                  padding: const EdgeInsets.only(left: 30.0),
                   child: MaterialButton(
                     color: Colors.black,
                     onPressed: () {
@@ -173,7 +173,7 @@ Widget build(BuildContext context) {
                 ),
                 const SizedBox(height: 20),
                 Container(
-                  padding: const EdgeInsets.only(left: 10.0),
+                  padding: const EdgeInsets.only(left: 40.0),
                   child: MaterialButton(
                     color: Colors.black,
                     onPressed: () {

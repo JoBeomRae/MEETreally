@@ -14,10 +14,12 @@ class _NowPlusPageState extends State<NowPlusPage> {
   final TextEditingController _guController = TextEditingController();
   final TextEditingController _personController = TextEditingController();
   final List<TextEditingController> _controllers = [];
+  final _formKey = GlobalKey<FormState>();
+  bool _enableSubmitButton = false;
 
   Map<String, Map<String, List<String>>> locations = {
     '서울특별시': {
-      '종로구': ['청운동', '효자동', '사직동'], // 예시 동 데이터입니다. 원하는대로 수정하세요.
+      '종로구': ['청운동', '효자동', '사직동'],
       '중구': ['을지로동', '명동', '필동'],
     },
     '부산광역시': {
@@ -51,6 +53,24 @@ class _NowPlusPageState extends State<NowPlusPage> {
         );
       },
     );
+  }
+
+void _checkInputValid() {
+  setState(() {
+    int selectedFriendsCount = _controllers.where((controller) => controller.text.isNotEmpty).length;
+    _enableSubmitButton = (selectedSi != null &&
+        selectedGu != null &&
+        selectedPeopleCount != null &&
+        selectedPeopleCount == selectedFriendsCount);
+  });
+}
+
+    @override
+  void initState() {
+    super.initState();
+    _siController.addListener(_checkInputValid);
+    _guController.addListener(_checkInputValid);
+    _personController.addListener(_checkInputValid);
   }
   
 void _showFriendPicker(int index) {
@@ -120,16 +140,20 @@ void _showFriendPicker(int index) {
     });
 }
 
+
+
 void _selectFriend(int index, String friendName) {
   if (!_controllers.any((controller) => controller.text == friendName)) {
     setState(() {
       _controllers[index].text = friendName;
+      _checkInputValid(); // 추가된 부분
     });
     Navigator.pop(context);
   } else {
     _showAlert(context, '이미 선택된 친구입니다. 다른 친구를 선택해주세요.');
   }
 }
+
 
 
   @override
@@ -150,6 +174,8 @@ void _selectFriend(int index, String friendName) {
             padding: const EdgeInsets.only(top: 24.0),  // 이 부분을 추가합니다.
     child: Padding(
         padding: const EdgeInsets.all(16.0),
+       child: Form(
+            key: _formKey,
         child: Column(
           children: [
             // 뒤로 가기 버튼 추가
@@ -289,29 +315,33 @@ void _selectFriend(int index, String friendName) {
                   : [],
             ),
             // 등록하기 버튼
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 0, 0, 0),
-                foregroundColor: const Color.fromARGB(255, 255, 255, 255),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
+         ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 0, 0, 0),
+                  foregroundColor: const Color.fromARGB(255, 255, 255, 255),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
                 ),
-              ),
-              onPressed: () {
-                var dataToReturn = {
-                  'si': selectedSi,
-                  'gu': selectedGu,
-                  'dong': selectedDong,
-                  'friends': _controllers.map((e) => e.text).toList(),
-                };
+                onPressed: _enableSubmitButton
+                    ? () {
+                        var dataToReturn = {
+                          'si': selectedSi,
+                          'gu': selectedGu,
+                          'dong': selectedDong,
+                          'friends':
+                              _controllers.map((e) => e.text).toList(),
+                        };
 
-                Navigator.pop(context, dataToReturn);
-              },
-              child: const Text('등록하기'),
-            ),
-          ],
+                        Navigator.pop(context, dataToReturn);
+                      }
+                    : null, // 버튼 비활성화
+                child: const Text('등록하기'),
+              ),
+           ] ),
+          ),
         ),
       ),
-    ));
+    );
   }
 }

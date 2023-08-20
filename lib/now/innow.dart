@@ -69,15 +69,69 @@ class _InNowPageState extends State<InNow> {
     }
   }
 
+  void _showCallDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('전화하기'),
+          content: const Text(
+              '전화를 하면 등록한 사람에게만 전화가 갑니다.\n또한 전화를 받지 않으면 횟수가 차감되지 않습니다.\n전화를 하시겠습니까?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                // 전화하기 기능 구현
+              },
+              child: const Text('예'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('아니요'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+   void _showChatDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('채팅하기'),
+          content: const Text(
+              '채팅하기를 누르면 단체 채팅방이 만들어집니다.\n채팅을 하시겠습니까?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                // 채팅하기 기능 구현
+              },
+              child: const Text('예'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('아니요'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<UserData>(
       builder: (context, userData, child) {
         return Scaffold(
           body: Padding(
-            padding: const EdgeInsets.only(
-                top: 80.0, left: 20), // 공간을 두려면 이 줄을 사용하세요.
-
+            padding: const EdgeInsets.only(top: 80.0, left: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -116,6 +170,24 @@ class _InNowPageState extends State<InNow> {
                                 const SizedBox(height: 20),
                                 Text(
                                     '지역: ${userData.si ?? ''} ${userData.gu ?? ''} ${userData.dong ?? ''}'),
+                               Row(
+  mainAxisAlignment: MainAxisAlignment.center,
+  children: [
+    ElevatedButton(
+      onPressed: () {
+        _showCallDialog(); // 전화하기 기능 구현
+      },
+      child: const Text('전화하기'),
+    ),
+    const SizedBox(width: 10),
+    ElevatedButton(
+      onPressed: () {
+        _showChatDialog(); // 채팅하기 기능 구현
+      },
+      child: const Text('채팅하기'),
+    ),
+  ],
+),
                               ],
                             ],
                           ),

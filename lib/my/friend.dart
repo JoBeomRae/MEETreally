@@ -8,15 +8,16 @@ class FriendInfo {
   final int age;
   final String job;
 
-  FriendInfo(
-      {required this.nickname,
-      required this.name,
-      required this.age,
-      required this.job});
+  FriendInfo({
+    required this.nickname,
+    required this.name,
+    required this.age,
+    required this.job,
+  });
 }
 
 class FriendList extends StatefulWidget {
-  const FriendList({super.key});
+  const FriendList({Key? key}) : super(key: key);
 
   @override
   _FriendListState createState() => _FriendListState();
@@ -118,7 +119,7 @@ class _FriendListState extends State<FriendList> {
                   });
                 },
               ),
-              const Divider(),
+              const Divider(color: Colors.grey), // 회색 선 추가
             ],
             Expanded(
               child: StreamBuilder<QuerySnapshot>(

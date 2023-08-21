@@ -97,14 +97,13 @@ class _InNowPageState extends State<InNow> {
     );
   }
 
-   void _showChatDialog() {
+  void _showChatDialog() {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: const Text('채팅하기'),
-          content: const Text(
-              '채팅하기를 누르면 단체 채팅방이 만들어집니다.\n채팅을 하시겠습니까?'),
+          content: const Text('채팅하기를 누르면 단체 채팅방이 만들어집니다.\n채팅을 하시겠습니까?'),
           actions: [
             TextButton(
               onPressed: () {
@@ -170,24 +169,38 @@ class _InNowPageState extends State<InNow> {
                                 const SizedBox(height: 20),
                                 Text(
                                     '지역: ${userData.si ?? ''} ${userData.gu ?? ''} ${userData.dong ?? ''}'),
-                               Row(
-  mainAxisAlignment: MainAxisAlignment.center,
-  children: [
-    ElevatedButton(
-      onPressed: () {
-        _showCallDialog(); // 전화하기 기능 구현
-      },
-      child: const Text('전화하기'),
-    ),
-    const SizedBox(width: 10),
-    ElevatedButton(
-      onPressed: () {
-        _showChatDialog(); // 채팅하기 기능 구현
-      },
-      child: const Text('채팅하기'),
-    ),
-  ],
-),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        _showCallDialog(); // 전화하기 기능 구현
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: const Color.fromARGB(
+                                            255,
+                                            148,
+                                            173,
+                                            255), // 채팅하기 버튼 배경색 변경
+                                      ),
+                                      child: const Text('전화하기'),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        _showChatDialog(); // 채팅하기 기능 구현
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: const Color.fromARGB(
+                                            255,
+                                            148,
+                                            173,
+                                            255), // 채팅하기 버튼 배경색 변경
+                                      ),
+                                      child: const Text('채팅하기'),
+                                    ),
+                                  ],
+                                ),
                               ],
                             ],
                           ),
@@ -219,7 +232,8 @@ class _InNowPageState extends State<InNow> {
                 await userData.saveToFirestore();
               }
             },
-            child: const Icon(Icons.add),
+            backgroundColor: const Color.fromARGB(255, 148, 173, 255),
+            child: const Icon(Icons.add), // 배경색 변경
           ),
         );
       },

@@ -61,6 +61,8 @@ class FirstPageState extends State<FirstPage> {
         unselectedItemColor:
             const Color.fromARGB(255, 181, 181, 181), // 선택되지 않은 아이템 색상을 회색으로 변경
         elevation: 10, // 그림자 강도를 증가
+        showSelectedLabels: true, // 선택된 아이템 레이블 표시
+        showUnselectedLabels: true, // 선택되지 않은 아이템 레이블 표시
       ),
     );
   }

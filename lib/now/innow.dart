@@ -70,8 +70,8 @@ class _InNowPageState extends State<InNow> {
 
   Map<String, Map<String, List<String>>> data = {
     '서울특별시': {
-      '종로구': ['청운동', '효자동', '사직동'],
-      '중구': ['을지로동', '명동', '필동'],
+      '종로구': ['청운동', '효자동', '사직동','상관없음'],
+      '중구': ['을지로동', '명동', '필동','상관없음'],
     },
     // 필요한만큼 다른 데이터를 추가합니다.
   };
@@ -159,77 +159,79 @@ class _InNowPageState extends State<InNow> {
                     color: Colors.black,
                   ),
                 ),
-                Row(  // 여기서 Row 위젯을 추가합니다.
-                  children: [
-                    DropdownButton<String>(
-                      value: selectedSi,
-                      onChanged: (value) {
-                        setState(() {
-                          selectedSi = value;
-                          selectedGu = null;
-                          selectedDong = null;
-                        });
-                      },
-                      items: data.keys
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                    ),
-                    DropdownButton<String>(
-                      value: selectedGu,
-                      onChanged: (value) {
-                        setState(() {
-                          selectedGu = value;
-                          selectedDong = null;
-                        });
-                      },
-                      items: selectedSi == null
-                          ? []
-                          : data[selectedSi]!.keys
-                              .map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                    ),
-                    DropdownButton<String>(
-                      value: selectedDong,
-                      onChanged: (value) {
-                        setState(() {
-                          selectedDong = value;
-                        });
-                      },
-                      items: selectedGu == null
-                          ? []
-                          : data[selectedSi]![selectedGu]!
-                              .map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                    ),
-                    DropdownButton<int>(
-                      value: selectedNumOfPeople,
-                      onChanged: (value) {
-                        setState(() {
-                          selectedNumOfPeople = value;
-                        });
-                      },
-                      items: <int>[1, 2, 3]
-                          .map<DropdownMenuItem<int>>((int value) {
-                        return DropdownMenuItem<int>(
-                          value: value,
-                          child: Text('$value 명'),
-                        );
-                      }).toList(),
-                    ),
-                  ],
-                ),
+                Row(
+  children: [
+    DropdownButton<String>(
+      value: selectedSi,
+      onChanged: (value) {
+        setState(() {
+          selectedSi = value;
+          selectedGu = null;
+          selectedDong = null;
+        });
+      },
+      items: data.keys
+          .map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+    ),
+    if (selectedSi != null) ...[
+      DropdownButton<String>(
+        value: selectedGu,
+        onChanged: (value) {
+          setState(() {
+            selectedGu = value;
+            selectedDong = null;
+          });
+        },
+        items: data[selectedSi]!.keys
+            .map<DropdownMenuItem<String>>((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(value),
+          );
+        }).toList(),
+      ),
+    ],
+    if (selectedGu != null) ...[
+      DropdownButton<String>(
+        value: selectedDong,
+        onChanged: (value) {
+          setState(() {
+            selectedDong = value;
+          });
+        },
+        items: data[selectedSi]![selectedGu]!
+            .map<DropdownMenuItem<String>>((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(value),
+          );
+        }).toList(),
+      ),
+    ],
+    if (selectedDong != null) ...[
+      DropdownButton<int>(
+        value: selectedNumOfPeople,
+        onChanged: (value) {
+          setState(() {
+            selectedNumOfPeople = value;
+          });
+        },
+        items: <int>[1, 2, 3]
+            .map<DropdownMenuItem<int>>((int value) {
+          return DropdownMenuItem<int>(
+            value: value,
+            child: Text('$value 명'),
+          );
+        }).toList(),
+      ),
+    ],
+  ],
+),
                 const SizedBox(height: 50),
                 Center(
                   child: Column(

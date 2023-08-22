@@ -15,6 +15,7 @@ class InjeungNumberPage extends StatefulWidget {
 class _InjeungNumberPageState extends State<InjeungNumberPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController _smsController = TextEditingController();
+  bool _canContinue = false; // 계속하기 버튼 활성화 상태를 관리하는 변수 추가
 
   Future<void> _verifySmsCode() async {
     final PhoneAuthCredential credential = PhoneAuthProvider.credential(
@@ -54,10 +55,8 @@ class _InjeungNumberPageState extends State<InjeungNumberPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            const Text(
-              '인증번호를 입력해 주세요.',
-              style: TextStyle(fontSize: 24),
-            ),
+            const Text('인증번호를 입력해 주세요.',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             const Text(
               '인증 번호가 전송됐어요. 받은 번호를 입력하면 인증이 완료돼요.',
@@ -68,35 +67,39 @@ class _InjeungNumberPageState extends State<InjeungNumberPage> {
               controller: _smsController,
               keyboardType: TextInputType.number,
               decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: '6자리 숫자',
-                   labelStyle: TextStyle(color: Colors.black), // 라벨 텍스트를 검은색으로 설정
- focusedBorder: OutlineInputBorder(
-      borderSide: BorderSide(color: Colors.black, width: 2.0), // 포커스된 테두리 색상을 흰색으로
-    ),
-  ),
+                border: UnderlineInputBorder(), // 밑줄로만 표시
+                labelStyle: TextStyle(color: Colors.black),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.black, width: 2.0),
+                ),
+              ),
               maxLength: 6,
+              onChanged: (value) {
+                setState(() {
+                  _canContinue = value.length == 6; // 6자리일 때만 계속하기 가능
+                });
+              },
             ),
             const SizedBox(height: 16),
-
-
             SizedBox(
-  width: double.infinity,  // 화면의 너비로 꽉 차게 설정
-  child: ElevatedButton(
-    onPressed: _verifySmsCode,
-    style: ElevatedButton.styleFrom(
-      backgroundColor: const Color.fromARGB(255, 0, 0, 0),  // 버튼의 배경색 설정
-      foregroundColor: const Color.fromARGB(255, 255, 255, 255),  // 버튼의 텍스트 색상
-      padding: const EdgeInsets.symmetric(vertical: 16.0),  // 버튼 패딩
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),  // 버튼 모서리 둥글게
-    ),
-    child: const Text(
-      '계속하기',
-      style: TextStyle(fontSize: 21),  // 텍스트 크기를 21로 설정
-    ),
-  ),
-),
-
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _canContinue ? _verifySmsCode : null, // 6자리 입력 시 활성화
+                style: ElevatedButton.styleFrom(
+                  backgroundColor:
+                      const Color.fromARGB(255, 0, 0, 0), // 버튼의 배경색 설정
+                  foregroundColor:
+                      const Color.fromARGB(255, 255, 255, 255), // 버튼의 텍스트 색상
+                  padding: const EdgeInsets.symmetric(vertical: 16.0), // 버튼 패딩
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20)), // 버튼 모서리 둥글게
+                ),
+                child: const Text(
+                  '계속하기',
+                  style: TextStyle(fontSize: 21), // 텍스트 크기를 21로 설정
+                ),
+              ),
+            ),
           ],
         ),
       ),

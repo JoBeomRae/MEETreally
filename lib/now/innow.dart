@@ -5,6 +5,7 @@ import 'package:meet/now/nowplus.dart';
 import 'package:logger/logger.dart';
 import 'package:meet/now/feed.dart';
 import 'package:provider/provider.dart';
+import 'package:meet/now/find.dart';
 
 var logger = Logger();
 
@@ -59,23 +60,7 @@ class InNow extends StatefulWidget {
   _InNowPageState createState() => _InNowPageState();
 }
 
-
-
-
 class _InNowPageState extends State<InNow> {
-  String? selectedSi;
-  String? selectedGu;
-  String? selectedDong;
-  int? selectedNumOfPeople;
-
-  Map<String, Map<String, List<String>>> data = {
-    '서울특별시': {
-      '종로구': ['청운동', '효자동', '사직동','상관없음'],
-      '중구': ['을지로동', '명동', '필동','상관없음'],
-    },
-    // 필요한만큼 다른 데이터를 추가합니다.
-  };
-
   @override
   void initState() {
     super.initState();
@@ -113,13 +98,14 @@ class _InNowPageState extends State<InNow> {
     );
   }
 
-  void _showChatDialog() {
+   void _showChatDialog() {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: const Text('채팅하기'),
-          content: const Text('채팅하기를 누르면 단체 채팅방이 만들어집니다.\n채팅을 하시겠습니까?'),
+          content: const Text(
+              '채팅하기를 누르면 단체 채팅방이 만들어집니다.\n채팅을 하시겠습니까?'),
           actions: [
             TextButton(
               onPressed: () {
@@ -140,8 +126,7 @@ class _InNowPageState extends State<InNow> {
     );
   }
 
-
-@override
+  @override
   Widget build(BuildContext context) {
     return Consumer<UserData>(
       builder: (context, userData, child) {
@@ -159,79 +144,6 @@ class _InNowPageState extends State<InNow> {
                     color: Colors.black,
                   ),
                 ),
-                Row(
-  children: [
-    DropdownButton<String>(
-      value: selectedSi,
-      onChanged: (value) {
-        setState(() {
-          selectedSi = value;
-          selectedGu = null;
-          selectedDong = null;
-        });
-      },
-      items: data.keys
-          .map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
-    ),
-    if (selectedSi != null) ...[
-      DropdownButton<String>(
-        value: selectedGu,
-        onChanged: (value) {
-          setState(() {
-            selectedGu = value;
-            selectedDong = null;
-          });
-        },
-        items: data[selectedSi]!.keys
-            .map<DropdownMenuItem<String>>((String value) {
-          return DropdownMenuItem<String>(
-            value: value,
-            child: Text(value),
-          );
-        }).toList(),
-      ),
-    ],
-    if (selectedGu != null) ...[
-      DropdownButton<String>(
-        value: selectedDong,
-        onChanged: (value) {
-          setState(() {
-            selectedDong = value;
-          });
-        },
-        items: data[selectedSi]![selectedGu]!
-            .map<DropdownMenuItem<String>>((String value) {
-          return DropdownMenuItem<String>(
-            value: value,
-            child: Text(value),
-          );
-        }).toList(),
-      ),
-    ],
-    if (selectedDong != null) ...[
-      DropdownButton<int>(
-        value: selectedNumOfPeople,
-        onChanged: (value) {
-          setState(() {
-            selectedNumOfPeople = value;
-          });
-        },
-        items: <int>[1, 2, 3]
-            .map<DropdownMenuItem<int>>((int value) {
-          return DropdownMenuItem<int>(
-            value: value,
-            child: Text('$value 명'),
-          );
-        }).toList(),
-      ),
-    ],
-  ],
-),
                 const SizedBox(height: 50),
                 Center(
                   child: Column(
@@ -259,38 +171,24 @@ class _InNowPageState extends State<InNow> {
                                 const SizedBox(height: 20),
                                 Text(
                                     '지역: ${userData.si ?? ''} ${userData.gu ?? ''} ${userData.dong ?? ''}'),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        _showCallDialog(); // 전화하기 기능 구현
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: const Color.fromARGB(
-                                            255,
-                                            148,
-                                            173,
-                                            255), // 채팅하기 버튼 배경색 변경
-                                      ),
-                                      child: const Text('전화하기'),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        _showChatDialog(); // 채팅하기 기능 구현
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: const Color.fromARGB(
-                                            255,
-                                            148,
-                                            173,
-                                            255), // 채팅하기 버튼 배경색 변경
-                                      ),
-                                      child: const Text('채팅하기'),
-                                    ),
-                                  ],
-                                ),
+                               Row(
+  mainAxisAlignment: MainAxisAlignment.center,
+  children: [
+    ElevatedButton(
+      onPressed: () {
+        _showCallDialog(); // 전화하기 기능 구현
+      },
+      child: const Text('전화하기'),
+    ),
+    const SizedBox(width: 10),
+    ElevatedButton(
+      onPressed: () {
+        _showChatDialog(); // 채팅하기 기능 구현
+      },
+      child: const Text('채팅하기'),
+    ),
+  ],
+),
                               ],
                             ],
                           ),
@@ -302,29 +200,44 @@ class _InNowPageState extends State<InNow> {
               ],
             ),
           ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () async {
-              final result = await Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const NowPlusPage()),
-              );
+        floatingActionButton: Row(
+  mainAxisAlignment: MainAxisAlignment.end,
+  children: [
+    FloatingActionButton(
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const FindPage()), // find.dart 파일에 있는 위젯으로 이동
+        );
+      },
+      child: const Icon(Icons.search), // 돋보기 아이콘 추가
+    ),
+    const SizedBox(width: 16), // 버튼간의 간격을 조절
+    FloatingActionButton(
+      onPressed: () async {
+        final result = await Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const NowPlusPage()),
+        );
 
-              if (result != null) {
-                // ignore: use_build_context_synchronously
-                Provider.of<UserData>(context, listen: false)
-                    .updateUserData(result);
+        if (result != null) {
+          // ignore: use_build_context_synchronously
+          Provider.of<UserData>(context, listen: false)
+              .updateUserData(result);
 
-                logger.i(userData.si);
-                logger.i(userData.gu);
-                logger.i(userData.dong);
-                logger.i(userData.friends);
+          logger.i(userData.si);
+          logger.i(userData.gu);
+          logger.i(userData.dong);
+          logger.i(userData.friends);
 
-                await userData.saveToFirestore();
-              }
-            },
-            backgroundColor: const Color.fromARGB(255, 148, 173, 255),
-            child: const Icon(Icons.add), // 배경색 변경
-          ),
+          await userData.saveToFirestore();
+        }
+      },
+      child: const Icon(Icons.add),
+    ),
+  ],
+),
+
         );
       },
     );

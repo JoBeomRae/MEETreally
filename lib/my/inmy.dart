@@ -98,7 +98,7 @@ class _InMyState extends State<InMy> {
                       Container(
                         padding: const EdgeInsets.all(5.0),
                         decoration: const BoxDecoration(
-                          color: Color.fromARGB(255, 148, 173, 255),
+                          color: Color(0xFFE06292),
                           shape: BoxShape.circle,
                         ),
                         child: CircleAvatar(
@@ -118,7 +118,7 @@ class _InMyState extends State<InMy> {
                             width: 30,
                             height: 30,
                             decoration: const BoxDecoration(
-                              color: Color.fromARGB(255, 148, 173, 255),
+                              color: Color(0xFFE06292),
                               shape: BoxShape.circle,
                             ),
                             child: const Icon(
@@ -155,8 +155,7 @@ class _InMyState extends State<InMy> {
                     padding: const EdgeInsets.only(left: 30.0),
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            const Color.fromARGB(255, 148, 173, 255),
+                        backgroundColor: const Color(0xFFE06292),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
@@ -182,8 +181,7 @@ class _InMyState extends State<InMy> {
                     padding: const EdgeInsets.only(left: 40.0),
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            const Color.fromARGB(255, 148, 173, 255),
+                        backgroundColor: const Color(0xFFE06292),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),

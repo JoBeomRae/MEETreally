@@ -212,7 +212,8 @@ class _InNowPageState extends State<InNow> {
                   );
                 },
                 // ignore: sort_child_properties_last
-                child: const Icon(Icons.search, color: Colors.black),
+                child: const Icon(Icons.search,
+                    color: Color.fromARGB(255, 255, 255, 255)),
                 backgroundColor:
                     const Color(0xFFE06292), // 아이콘 배경색을 #e06292로 변경
               ),
@@ -241,7 +242,7 @@ class _InNowPageState extends State<InNow> {
                 // ignore: sort_child_properties_last
                 child: const Text('+',
                     style: TextStyle(
-                        color: Colors.black,
+                        color: Color.fromARGB(255, 255, 255, 255),
                         fontSize: 24,
                         fontWeight: FontWeight.bold)), // '+' 아이콘 대신 사용
                 backgroundColor:

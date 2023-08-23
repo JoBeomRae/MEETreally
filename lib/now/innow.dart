@@ -131,7 +131,7 @@ class _InNowPageState extends State<InNow> {
       builder: (context, userData, child) {
         return Scaffold(
           body: Padding(
-            padding: const EdgeInsets.only(top: 80.0, left: 20),
+            padding: const EdgeInsets.only(top: 80.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -158,38 +158,67 @@ class _InNowPageState extends State<InNow> {
                                   builder: (context) => const FeedPage()),
                             );
                           },
-                          child: Column(
-                            children: <Widget>[
-                              Text(
-                                "멤버: ${userData.friends != null ? userData.friends!.join(', ') : ''}",
-                                textAlign: TextAlign.center,
-                              ),
-                              if (userData.si != null ||
-                                  userData.gu != null ||
-                                  userData.dong != null) ...[
-                                const SizedBox(height: 20),
+                          child: Container(
+                            padding:
+                                const EdgeInsets.all(16.0), // 안쪽 여백을 조금 추가해줍니다.
+                            decoration: const BoxDecoration(
+                              border: Border(
+                                top:
+                                    BorderSide(color: Colors.black, width: 1.0),
+                                bottom:
+                                    BorderSide(color: Colors.black, width: 1.0),
+                              ), // 테투리 설정
+                            ),
+                            child: Column(
+                              children: <Widget>[
                                 Text(
-                                    '지역: ${userData.si ?? ''} ${userData.gu ?? ''} ${userData.dong ?? ''}'),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        _showCallDialog(); // 전화하기 기능 구현
-                                      },
-                                      child: const Text('전화하기'),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        _showChatDialog(); // 채팅하기 기능 구현
-                                      },
-                                      child: const Text('채팅하기'),
-                                    ),
-                                  ],
+                                  "멤버: ${userData.friends != null ? userData.friends!.join(', ') : ''}",
+                                  textAlign: TextAlign.center,
                                 ),
+                                if (userData.si != null ||
+                                    userData.gu != null ||
+                                    userData.dong != null) ...[
+                                  const SizedBox(height: 20),
+                                  Text(
+                                      '지역: ${userData.si ?? ''} ${userData.gu ?? ''} ${userData.dong ?? ''}'),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          _showCallDialog(); // 전화하기 기능 구현
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: const Color.fromARGB(
+                                              255, 0, 0, 0), // 배경색 설정
+                                          shape: RoundedRectangleBorder(
+                                            // 모서리 둥글게
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                          ),
+                                        ),
+                                        child: const Text('전화하기'),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      ElevatedButton(
+                                          onPressed: () {
+                                            _showChatDialog(); // 채팅하기 기능 구현
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  const Color.fromARGB(
+                                                      255, 0, 0, 0), // 배경색 설정
+                                              shape: RoundedRectangleBorder(
+                                                // 모서리 둥글게
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                              )),
+                                          child: const Text('채팅하기')),
+                                    ],
+                                  ),
+                                ],
                               ],
-                            ],
+                            ),
                           ),
                         ),
                       ],
@@ -215,7 +244,7 @@ class _InNowPageState extends State<InNow> {
                 child: const Icon(Icons.search,
                     color: Color.fromARGB(255, 255, 255, 255)),
                 backgroundColor:
-                    const Color(0xFFE06292), // 아이콘 배경색을 #e06292로 변경
+                    const Color.fromARGB(255, 0, 0, 0), // 아이콘 배경색을 #e06292로 변경
               ),
               const SizedBox(width: 16), // 버튼간의 간격을 조절
               FloatingActionButton(
@@ -246,7 +275,7 @@ class _InNowPageState extends State<InNow> {
                         fontSize: 24,
                         fontWeight: FontWeight.bold)), // '+' 아이콘 대신 사용
                 backgroundColor:
-                    const Color(0xFFE06292), // 아이콘 배경색을 #e06292로 변경
+                    const Color.fromARGB(255, 0, 0, 0), // 아이콘 배경색을 #e06292로 변경
               ),
             ],
           ),

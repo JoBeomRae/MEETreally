@@ -98,14 +98,13 @@ class _InNowPageState extends State<InNow> {
     );
   }
 
-   void _showChatDialog() {
+  void _showChatDialog() {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: const Text('채팅하기'),
-          content: const Text(
-              '채팅하기를 누르면 단체 채팅방이 만들어집니다.\n채팅을 하시겠습니까?'),
+          content: const Text('채팅하기를 누르면 단체 채팅방이 만들어집니다.\n채팅을 하시겠습니까?'),
           actions: [
             TextButton(
               onPressed: () {
@@ -171,24 +170,24 @@ class _InNowPageState extends State<InNow> {
                                 const SizedBox(height: 20),
                                 Text(
                                     '지역: ${userData.si ?? ''} ${userData.gu ?? ''} ${userData.dong ?? ''}'),
-                               Row(
-  mainAxisAlignment: MainAxisAlignment.center,
-  children: [
-    ElevatedButton(
-      onPressed: () {
-        _showCallDialog(); // 전화하기 기능 구현
-      },
-      child: const Text('전화하기'),
-    ),
-    const SizedBox(width: 10),
-    ElevatedButton(
-      onPressed: () {
-        _showChatDialog(); // 채팅하기 기능 구현
-      },
-      child: const Text('채팅하기'),
-    ),
-  ],
-),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        _showCallDialog(); // 전화하기 기능 구현
+                                      },
+                                      child: const Text('전화하기'),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        _showChatDialog(); // 채팅하기 기능 구현
+                                      },
+                                      child: const Text('채팅하기'),
+                                    ),
+                                  ],
+                                ),
                               ],
                             ],
                           ),
@@ -200,44 +199,56 @@ class _InNowPageState extends State<InNow> {
               ],
             ),
           ),
-        floatingActionButton: Row(
-  mainAxisAlignment: MainAxisAlignment.end,
-  children: [
-    FloatingActionButton(
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const FindPage()), // find.dart 파일에 있는 위젯으로 이동
-        );
-      },
-      child: const Icon(Icons.search), // 돋보기 아이콘 추가
-    ),
-    const SizedBox(width: 16), // 버튼간의 간격을 조절
-    FloatingActionButton(
-      onPressed: () async {
-        final result = await Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const NowPlusPage()),
-        );
+          floatingActionButton: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              FloatingActionButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            const FindPage()), // find.dart 파일에 있는 위젯으로 이동
+                  );
+                },
+                // ignore: sort_child_properties_last
+                child: const Icon(Icons.search, color: Colors.black),
+                backgroundColor:
+                    const Color(0xFFE06292), // 아이콘 배경색을 #e06292로 변경
+              ),
+              const SizedBox(width: 16), // 버튼간의 간격을 조절
+              FloatingActionButton(
+                onPressed: () async {
+                  final result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const NowPlusPage()),
+                  );
 
-        if (result != null) {
-          // ignore: use_build_context_synchronously
-          Provider.of<UserData>(context, listen: false)
-              .updateUserData(result);
+                  if (result != null) {
+                    // ignore: use_build_context_synchronously
+                    Provider.of<UserData>(context, listen: false)
+                        .updateUserData(result);
 
-          logger.i(userData.si);
-          logger.i(userData.gu);
-          logger.i(userData.dong);
-          logger.i(userData.friends);
+                    logger.i(userData.si);
+                    logger.i(userData.gu);
+                    logger.i(userData.dong);
+                    logger.i(userData.friends);
 
-          await userData.saveToFirestore();
-        }
-      },
-      child: const Icon(Icons.add),
-    ),
-  ],
-),
-
+                    await userData.saveToFirestore();
+                  }
+                },
+                // ignore: sort_child_properties_last
+                child: const Text('+',
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold)), // '+' 아이콘 대신 사용
+                backgroundColor:
+                    const Color(0xFFE06292), // 아이콘 배경색을 #e06292로 변경
+              ),
+            ],
+          ),
         );
       },
     );

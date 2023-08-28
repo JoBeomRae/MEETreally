@@ -9,10 +9,9 @@ import 'package:meet/now/find.dart';
 
 var logger = Logger();
 
-// 1. UserData 모델 클래스 생성
 class UserData extends ChangeNotifier {
   User? user;
-  List<Map<String, dynamic>> allUsersData = []; // 추가
+  List<Map<String, dynamic>> allUsersData = [];
   Map<String, dynamic>? userInfo;
   String? si;
   String? gu;
@@ -83,8 +82,6 @@ class _InNowPageState extends State<InNow> {
               onPressed: () async {
                 Navigator.of(context).pop();
                 final userData = Provider.of<UserData>(context, listen: false);
-                // ignore: unused_local_variable
-                final data = userData.allUsersData[index];
                 userData.allUsersData.removeAt(index);
                 await userData.saveToFirestore();
                 setState(() {});
@@ -186,6 +183,9 @@ class _InNowPageState extends State<InNow> {
                       final gu = data['gu'] ?? '';
                       final dong = data['dong'] ?? '';
                       final friends = List<String>.from(data['friends'] ?? []);
+                      final isCurrentUserData =
+                          data['userId'] == userData.user?.uid;
+
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Row(
@@ -202,13 +202,9 @@ class _InNowPageState extends State<InNow> {
                                 },
                                 child: Container(
                                   padding: const EdgeInsets.all(16.0),
-                                  decoration: const BoxDecoration(
-                                    border: Border(
-                                      top: BorderSide(
-                                          color: Colors.black, width: 1.0),
-                                      bottom: BorderSide(
-                                          color: Colors.black, width: 1.0),
-                                    ),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: Colors.black, width: 1.0),
                                   ),
                                   child: Column(
                                     children: <Widget>[
@@ -225,37 +221,41 @@ class _InNowPageState extends State<InNow> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
                                           children: [
-                                            ElevatedButton(
-                                              onPressed: () {
-                                                _showCallDialog();
-                                              },
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor:
-                                                    const Color.fromARGB(
-                                                        255, 0, 0, 0),
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(20),
+                                            if (isCurrentUserData) ...[
+                                              ElevatedButton(
+                                                onPressed: () {
+                                                  _showCallDialog();
+                                                },
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor:
+                                                      const Color.fromARGB(
+                                                          255, 0, 0, 0),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20),
+                                                  ),
                                                 ),
+                                                child: const Text('전화하기'),
                                               ),
-                                              child: const Text('전화하기'),
-                                            ),
-                                            const SizedBox(width: 10),
-                                            ElevatedButton(
-                                              onPressed: () {
-                                                _showChatDialog();
-                                              },
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor:
-                                                    const Color.fromARGB(
-                                                        255, 0, 0, 0),
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(20),
+                                              const SizedBox(width: 10),
+                                              ElevatedButton(
+                                                onPressed: () {
+                                                  _showChatDialog();
+                                                },
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor:
+                                                      const Color.fromARGB(
+                                                          255, 0, 0, 0),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20),
+                                                  ),
                                                 ),
+                                                child: const Text('채팅하기'),
                                               ),
-                                              child: const Text('채팅하기'),
-                                            ),
+                                            ],
                                           ],
                                         ),
                                       ],
@@ -264,12 +264,18 @@ class _InNowPageState extends State<InNow> {
                                 ),
                               ),
                             ),
-                            IconButton(
-                              icon: const Icon(Icons.close),
-                              onPressed: () {
-                                _showDeleteConfirmationDialog(index);
-                              },
-                            ),
+                            if (isCurrentUserData) ...[
+                              Positioned(
+                                right: 0,
+                                top: 0,
+                                child: IconButton(
+                                  icon: const Icon(Icons.close),
+                                  onPressed: () {
+                                    _showDeleteConfirmationDialog(index);
+                                  },
+                                ),
+                              ),
+                            ],
                           ],
                         ),
                       );

@@ -72,6 +72,37 @@ class _InNowPageState extends State<InNow> {
     }
   }
 
+  void _showDeleteConfirmationDialog(int index) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('정말 삭제하시겠습니까?'),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                final userData = Provider.of<UserData>(context, listen: false);
+                // ignore: unused_local_variable
+                final data = userData.allUsersData[index];
+                userData.allUsersData.removeAt(index);
+                await userData.saveToFirestore();
+                setState(() {});
+              },
+              child: const Text('예'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('아니요'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _showCallDialog() {
     showDialog(
       context: context,
@@ -156,80 +187,92 @@ class _InNowPageState extends State<InNow> {
                       final dong = data['dong'] ?? '';
                       final friends = List<String>.from(data['friends'] ?? []);
                       return Padding(
-                          padding:
-                              const EdgeInsets.all(8.0), // Adjust as needed
-                          child: InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const FeedPage(),
-                                ),
-                              );
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.all(16.0),
-                              decoration: const BoxDecoration(
-                                border: Border(
-                                  top: BorderSide(
-                                      color: Colors.black, width: 1.0),
-                                  bottom: BorderSide(
-                                      color: Colors.black, width: 1.0),
-                                ),
-                              ),
-                              child: Column(
-                                children: <Widget>[
-                                  Text(
-                                    "멤버: ${friends.join(', ')}",
-                                    textAlign: TextAlign.center,
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const FeedPage(),
+                                    ),
+                                  );
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(16.0),
+                                  decoration: const BoxDecoration(
+                                    border: Border(
+                                      top: BorderSide(
+                                          color: Colors.black, width: 1.0),
+                                      bottom: BorderSide(
+                                          color: Colors.black, width: 1.0),
+                                    ),
                                   ),
-                                  if (si.isNotEmpty ||
-                                      gu.isNotEmpty ||
-                                      dong.isNotEmpty) ...[
-                                    const SizedBox(height: 20),
-                                    Text('지역: $si $gu $dong'),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        ElevatedButton(
-                                          onPressed: () {
-                                            _showCallDialog();
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor:
-                                                const Color.fromARGB(
-                                                    255, 0, 0, 0),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
+                                  child: Column(
+                                    children: <Widget>[
+                                      Text(
+                                        "멤버: ${friends.join(', ')}",
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      if (si.isNotEmpty ||
+                                          gu.isNotEmpty ||
+                                          dong.isNotEmpty) ...[
+                                        const SizedBox(height: 20),
+                                        Text('지역: $si $gu $dong'),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            ElevatedButton(
+                                              onPressed: () {
+                                                _showCallDialog();
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                    const Color.fromARGB(
+                                                        255, 0, 0, 0),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(20),
+                                                ),
+                                              ),
+                                              child: const Text('전화하기'),
                                             ),
-                                          ),
-                                          child: const Text('전화하기'),
-                                        ),
-                                        const SizedBox(width: 10),
-                                        ElevatedButton(
-                                          onPressed: () {
-                                            _showChatDialog();
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor:
-                                                const Color.fromARGB(
-                                                    255, 0, 0, 0),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
+                                            const SizedBox(width: 10),
+                                            ElevatedButton(
+                                              onPressed: () {
+                                                _showChatDialog();
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                    const Color.fromARGB(
+                                                        255, 0, 0, 0),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(20),
+                                                ),
+                                              ),
+                                              child: const Text('채팅하기'),
                                             ),
-                                          ),
-                                          child: const Text('채팅하기'),
+                                          ],
                                         ),
                                       ],
-                                    ),
-                                  ],
-                                ],
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
-                          ));
+                            IconButton(
+                              icon: const Icon(Icons.close),
+                              onPressed: () {
+                                _showDeleteConfirmationDialog(index);
+                              },
+                            ),
+                          ],
+                        ),
+                      );
                     },
                   ),
                 ),

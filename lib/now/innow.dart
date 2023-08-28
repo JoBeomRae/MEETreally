@@ -12,6 +12,7 @@ var logger = Logger();
 // 1. UserData 모델 클래스 생성
 class UserData extends ChangeNotifier {
   User? user;
+  List<Map<String, dynamic>> allUsersData = []; // 추가
   Map<String, dynamic>? userInfo;
   String? si;
   String? gu;
@@ -48,6 +49,7 @@ class UserData extends ChangeNotifier {
     gu = returnedData['gu'];
     dong = returnedData['dong'];
     friends = List<String>.from(returnedData['friends'] ?? []);
+    allUsersData.add(returnedData);
     isDataFetched = true;
     notifyListeners();
   }
@@ -131,9 +133,9 @@ class _InNowPageState extends State<InNow> {
       builder: (context, userData, child) {
         return Scaffold(
           body: Padding(
-            padding: const EdgeInsets.only(top: 80.0),
+            padding: const EdgeInsets.only(top: 120),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const Text(
                   '실시간',
@@ -144,85 +146,91 @@ class _InNowPageState extends State<InNow> {
                   ),
                 ),
                 const SizedBox(height: 50),
-                Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      if (userData.isDataFetched &&
-                          userData.userInfo != null) ...[
-                        InkWell(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const FeedPage()),
-                            );
-                          },
-                          child: Container(
-                            padding:
-                                const EdgeInsets.all(16.0), // 안쪽 여백을 조금 추가해줍니다.
-                            decoration: const BoxDecoration(
-                              border: Border(
-                                top:
-                                    BorderSide(color: Colors.black, width: 1.0),
-                                bottom:
-                                    BorderSide(color: Colors.black, width: 1.0),
-                              ), // 테투리 설정
-                            ),
-                            child: Column(
-                              children: <Widget>[
-                                Text(
-                                  "멤버: ${userData.friends != null ? userData.friends!.join(', ') : ''}",
-                                  textAlign: TextAlign.center,
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: userData.allUsersData.length,
+                    itemBuilder: (context, index) {
+                      final data = userData.allUsersData[index];
+                      final si = data['si'] ?? '';
+                      final gu = data['gu'] ?? '';
+                      final dong = data['dong'] ?? '';
+                      final friends = List<String>.from(data['friends'] ?? []);
+                      return Padding(
+                          padding:
+                              const EdgeInsets.all(8.0), // Adjust as needed
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const FeedPage(),
                                 ),
-                                if (userData.si != null ||
-                                    userData.gu != null ||
-                                    userData.dong != null) ...[
-                                  const SizedBox(height: 20),
+                              );
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(16.0),
+                              decoration: const BoxDecoration(
+                                border: Border(
+                                  top: BorderSide(
+                                      color: Colors.black, width: 1.0),
+                                  bottom: BorderSide(
+                                      color: Colors.black, width: 1.0),
+                                ),
+                              ),
+                              child: Column(
+                                children: <Widget>[
                                   Text(
-                                      '지역: ${userData.si ?? ''} ${userData.gu ?? ''} ${userData.dong ?? ''}'),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          _showCallDialog(); // 전화하기 기능 구현
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: const Color.fromARGB(
-                                              255, 0, 0, 0), // 배경색 설정
-                                          shape: RoundedRectangleBorder(
-                                            // 모서리 둥글게
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                          ),
-                                        ),
-                                        child: const Text('전화하기'),
-                                      ),
-                                      const SizedBox(width: 10),
-                                      ElevatedButton(
+                                    "멤버: ${friends.join(', ')}",
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  if (si.isNotEmpty ||
+                                      gu.isNotEmpty ||
+                                      dong.isNotEmpty) ...[
+                                    const SizedBox(height: 20),
+                                    Text('지역: $si $gu $dong'),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        ElevatedButton(
                                           onPressed: () {
-                                            _showChatDialog(); // 채팅하기 기능 구현
+                                            _showCallDialog();
                                           },
                                           style: ElevatedButton.styleFrom(
-                                              backgroundColor:
-                                                  const Color.fromARGB(
-                                                      255, 0, 0, 0), // 배경색 설정
-                                              shape: RoundedRectangleBorder(
-                                                // 모서리 둥글게
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                              )),
-                                          child: const Text('채팅하기')),
-                                    ],
-                                  ),
+                                            backgroundColor:
+                                                const Color.fromARGB(
+                                                    255, 0, 0, 0),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                            ),
+                                          ),
+                                          child: const Text('전화하기'),
+                                        ),
+                                        const SizedBox(width: 10),
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            _showChatDialog();
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                const Color.fromARGB(
+                                                    255, 0, 0, 0),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                            ),
+                                          ),
+                                          child: const Text('채팅하기'),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ],
-                              ],
+                              ),
                             ),
-                          ),
-                        ),
-                      ],
-                    ],
+                          ));
+                    },
                   ),
                 ),
               ],
@@ -236,23 +244,22 @@ class _InNowPageState extends State<InNow> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>
-                            const FindPage()), // find.dart 파일에 있는 위젯으로 이동
+                      builder: (context) => const FindPage(),
+                    ),
                   );
                 },
-                // ignore: sort_child_properties_last
+                backgroundColor: const Color.fromARGB(255, 0, 0, 0),
                 child: const Icon(Icons.search,
                     color: Color.fromARGB(255, 255, 255, 255)),
-                backgroundColor:
-                    const Color.fromARGB(255, 0, 0, 0), // 아이콘 배경색을 #e06292로 변경
               ),
-              const SizedBox(width: 16), // 버튼간의 간격을 조절
+              const SizedBox(width: 16),
               FloatingActionButton(
                 onPressed: () async {
                   final result = await Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const NowPlusPage()),
+                      builder: (context) => const NowPlusPage(),
+                    ),
                   );
 
                   if (result != null) {
@@ -260,22 +267,28 @@ class _InNowPageState extends State<InNow> {
                     Provider.of<UserData>(context, listen: false)
                         .updateUserData(result);
 
-                    logger.i(userData.si);
-                    logger.i(userData.gu);
-                    logger.i(userData.dong);
-                    logger.i(userData.friends);
+                    final si = userData.allUsersData.last['si'];
+                    final gu = userData.allUsersData.last['gu'];
+                    final dong = userData.allUsersData.last['dong'];
+                    final friends = userData.allUsersData.last['friends'];
+
+                    logger.i(si);
+                    logger.i(gu);
+                    logger.i(dong);
+                    logger.i(friends);
 
                     await userData.saveToFirestore();
                   }
                 },
-                // ignore: sort_child_properties_last
-                child: const Text('+',
-                    style: TextStyle(
-                        color: Color.fromARGB(255, 255, 255, 255),
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold)), // '+' 아이콘 대신 사용
-                backgroundColor:
-                    const Color.fromARGB(255, 0, 0, 0), // 아이콘 배경색을 #e06292로 변경
+                backgroundColor: const Color.fromARGB(255, 0, 0, 0),
+                child: const Text(
+                  '+',
+                  style: TextStyle(
+                    color: Color.fromARGB(255, 255, 255, 255),
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ],
           ),

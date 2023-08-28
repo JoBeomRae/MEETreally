@@ -244,9 +244,16 @@ class _FriendListState extends State<FriendList> {
             TextButton(
               child: const Text("친구추가"),
               onPressed: () async {
-                await _firestore.collection('friends').add(userData);
-                // ignore: use_build_context_synchronously
-                Navigator.pop(context);
+                final user = _auth.currentUser;
+                if (user != null) {
+                  await _firestore
+                      .collection('users')
+                      .doc(user.uid)
+                      .collection('friends')
+                      .add(userData);
+                  // ignore: use_build_context_synchronously
+                  Navigator.pop(context);
+                }
               },
             ),
           ],

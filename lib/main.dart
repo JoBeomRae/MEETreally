@@ -62,7 +62,7 @@ class SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 0, 0, 0),
+      backgroundColor: const Color(0xFFC5CED6), // 배경색 설정
       body: Stack(
         children: <Widget>[
           // 이미지는 항상 표시됩니다.
@@ -76,12 +76,21 @@ class SplashScreenState extends State<SplashScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    const SizedBox(height: 75),
+                    const Text(
+                      'MEET',
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 0, 0, 0),
+                        fontSize: 55,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(),
                     const Text(
                       '우리 MEET으로 헌팅해요',
-                      style: TextStyle(color: Colors.white, fontSize: 24),
+                      style: TextStyle(
+                          color: Color.fromARGB(255, 0, 0, 0), fontSize: 24),
                     ),
-                    const SizedBox(height: 35),
+                    const SizedBox(height: 20),
                     SizedBox(
                       width: double.infinity,
                       height: 50,
@@ -133,7 +142,7 @@ class SplashScreenState extends State<SplashScreen> {
                         child: const Text('휴대폰 인증으로 시작하기'),
                       ),
                     ),
-                    const SizedBox(height: 100),
+                    const SizedBox(height: 60),
                   ],
                 ),
               ),

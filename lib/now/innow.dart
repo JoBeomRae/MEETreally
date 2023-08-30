@@ -19,6 +19,8 @@ class UserData extends ChangeNotifier {
   List<String>? friends;
   bool isDataFetched = false;
 
+  get icon => null;
+
   Future<void> fetchUserInfo(User user) async {
     DocumentSnapshot doc = await FirebaseFirestore.instance
         .collection('users')

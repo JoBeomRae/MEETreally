@@ -139,11 +139,13 @@ class _MyFeedPageState extends State<MyFeedPage> {
 
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.only(top: 50.0, left: 30.0),
+          padding: const EdgeInsets.only(),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
+              const SizedBox(height: 40), // 여기에 추가된 공간
+
               Row(
                 // Row 위젯 추가
                 children: [

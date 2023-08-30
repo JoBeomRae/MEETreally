@@ -42,6 +42,8 @@ dependencies:
   image : ^3.0.1
   image_cropper: ^5.0.0
   flutter_secure_storage: ^8.0.0
+  permission_handler: ^10.4.3
+
 
 
 

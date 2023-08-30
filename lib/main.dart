@@ -49,7 +49,7 @@ class SplashScreenState extends State<SplashScreen> {
   }
 
   _startTimer() {
-    Future.delayed(const Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 5), () {
       setState(() {
         _showButtons = true;
       });

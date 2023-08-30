@@ -138,7 +138,7 @@ class ProfileAndUserInfo extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(5.0),
                 decoration: const BoxDecoration(
-                  color: Color(0xFFE06292),
+                  color: Color.fromARGB(255, 0, 123, 255),
                   shape: BoxShape.circle,
                 ),
                 child: CircleAvatar(
@@ -159,7 +159,7 @@ class ProfileAndUserInfo extends StatelessWidget {
                     width: 30,
                     height: 30,
                     decoration: const BoxDecoration(
-                      color: Color(0xFFE06292),
+                      color: Color.fromARGB(255, 0, 123, 255),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(

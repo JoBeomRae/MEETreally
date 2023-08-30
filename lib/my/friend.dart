@@ -98,7 +98,7 @@ class _FriendListState extends State<FriendList> {
         appBar: null,
         body: Column(
           children: [
-            const SizedBox(height: 70), // 여기에 간격을 추가
+            const SizedBox(height: 70),
             if (loggedInUser != null) ...[
               ListTile(
                 title: Text('닉네임: ${loggedInUser!.nickname}'),
@@ -119,19 +119,35 @@ class _FriendListState extends State<FriendList> {
                   });
                 },
               ),
-              const Divider(color: Colors.grey), // 회색 선 추가
+              const Divider(
+                color: Color.fromARGB(255, 82, 82, 82),
+              ),
             ],
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
-                stream: _firestore.collection('friends').snapshots(),
+                stream: _firestore
+                    .collection('users')
+                    .doc(_auth.currentUser?.uid)
+                    .collection('friends')
+                    .snapshots(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return const Center(child: CircularProgressIndicator());
                   }
 
                   final friends = snapshot.data!.docs;
-                  List<Widget> friendWidgets =
-                      friends.map((doc) => _buildFriendItem(doc)).toList();
+                  List<Widget> friendWidgets = [];
+
+                  for (int i = 0; i < friends.length; i++) {
+                    friendWidgets.add(_buildFriendItem(friends[i], i));
+
+                    if (i != friends.length - 1) {
+                      friendWidgets.add(const Divider(
+                        color: Color.fromARGB(255, 82, 82, 82),
+                      ));
+                    }
+                    friendWidgets.add(const SizedBox(height: 10));
+                  }
 
                   return ListView(children: friendWidgets);
                 },
@@ -147,7 +163,7 @@ class _FriendListState extends State<FriendList> {
     );
   }
 
-  ListTile _buildFriendItem(QueryDocumentSnapshot doc) {
+  ListTile _buildFriendItem(QueryDocumentSnapshot doc, int index) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
 
     return ListTile(
@@ -167,15 +183,14 @@ class _FriendListState extends State<FriendList> {
         mainAxisSize: MainAxisSize.min,
         children: [
           IconButton(
-            icon: const Icon(Icons.edit),
-            onPressed: () {
-              // 친구 정보 수정 로직
-            },
-          ),
-          IconButton(
             icon: const Icon(Icons.delete),
             onPressed: () async {
-              await _firestore.collection('friends').doc(doc.id).delete();
+              await _firestore
+                  .collection('users')
+                  .doc(_auth.currentUser?.uid)
+                  .collection('friends')
+                  .doc(doc.id)
+                  .delete();
             },
           ),
         ],

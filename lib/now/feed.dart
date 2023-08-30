@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:meet/now/innow.dart'; // 실제 파일 경로에 맞게 수정하세요.
+// ignore: unused_import
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:meet/my/myfeed.dart'; // 실제 파일 경로에 맞게 수정하세요.
 
 class FeedPage extends StatelessWidget {
@@ -19,81 +22,102 @@ class FeedPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white, // 앱바 배경색을 흰색으로 설정
-        elevation: 0, // 그림자 제거
-        automaticallyImplyLeading: false, // 뒤로가기 버튼 자동 추가 비활성화
+        backgroundColor: Colors.white,
+        elevation: 0,
+        automaticallyImplyLeading: false,
         leading: IconButton(
-          icon:
-              const Icon(Icons.arrow_back, color: Colors.black), // 검은색 뒤로가기 아이콘
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
-            Navigator.of(context).pop(); // 화면 닫기
+            Navigator.of(context).pop();
           },
         ),
       ),
-      backgroundColor: Colors.white, // 배경색을 흰색으로 설정
+      backgroundColor: Colors.white,
       body: Consumer<UserData>(
         builder: (context, userData, child) {
-          // NowPlusPage에서 선택된 친구 목록을 가져옴
           List<String>? selectedFriends = userData.friends;
 
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 20),
-              if (selectedFriends != null && selectedFriends.isNotEmpty) ...[
-                // 선택된 친구 목록을 출력
-                for (int i = 0; i < selectedFriends.length; i++)
-                  Column(
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => MyFeedPage(
-                                  nickname:
-                                      extractNickname(selectedFriends[i])),
+          if (selectedFriends == null || selectedFriends.isEmpty) {
+            return const Center(
+              child: Text(
+                '친구를 선택하지 않았습니다.',
+                style: TextStyle(fontSize: 16),
+              ),
+            );
+          }
+
+          return ListView.builder(
+            itemCount: selectedFriends.length,
+            itemBuilder: (context, index) {
+              String friend = selectedFriends[index];
+              String friendNickname = extractNickname(friend);
+
+              return FutureBuilder<QuerySnapshot>(
+                future: FirebaseFirestore.instance
+                    .collection('users')
+                    .where('nickname', isEqualTo: friendNickname)
+                    .get(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
+                      Map<String, dynamic> data =
+                          snapshot.data!.docs[0].data() as Map<String, dynamic>;
+
+                      return Column(
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      MyFeedPage(nickname: friendNickname),
+                                ),
+                              );
+                            },
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 15.0),
+                              child: Row(
+                                children: [
+                                  const SizedBox(width: 50),
+                                  CircleAvatar(
+                                    backgroundImage:
+                                        NetworkImage(data['imageURL']),
+                                    radius: 20,
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Text(
+                                    friendNickname,
+                                    style: const TextStyle(fontSize: 20),
+                                  ),
+                                ],
+                              ),
                             ),
-                          );
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 15.0),
-                          child: Row(
-                            children: [
-                              Image.asset(
-                                'assets/dlstmxk.png', // 이미지 경로를 적절히 수정
-                                width: 70,
-                                height: 70,
-                              ),
-                              const SizedBox(width: 50),
-                              Text(
-                                extractNickname(selectedFriends[i]),
-                                style: const TextStyle(fontSize: 20),
-                              ),
-                            ],
                           ),
-                        ),
-                      ),
-                      if (i !=
-                          selectedFriends.length -
-                              1) // 마지막 친구 아이템 후에는 구분선 추가 안 함
-                        const Divider(
-                          color: Color.fromARGB(255, 105, 86, 86),
-                          height: 1,
-                          thickness: 1,
-                          indent: 20,
-                          endIndent: 20,
-                        ),
-                    ],
-                  ),
-              ] else ...[
-                // 선택된 친구가 없을 경우 출력
-                const Text(
-                  '친구를 선택하지 않았습니다.',
-                  style: TextStyle(fontSize: 16),
-                ),
-              ],
-            ],
+                          if (index != selectedFriends.length - 1)
+                            const Divider(
+                              color: Color.fromARGB(255, 105, 86, 86),
+                              height: 1,
+                              thickness: 1,
+                              indent: 20,
+                              endIndent: 20,
+                            ),
+                        ],
+                      );
+                    } else {
+                      return const ListTile(
+                        leading: CircleAvatar(),
+                        title: Text('User not found'),
+                      );
+                    }
+                  } else {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                },
+              );
+            },
           );
         },
       ),

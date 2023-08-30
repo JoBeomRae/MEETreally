@@ -76,8 +76,9 @@ class _InMyState extends State<InMy> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center, // 추가된 줄
+          crossAxisAlignment: CrossAxisAlignment.center, // 변경된 줄
+
           children: [
             const MyPageTitle(),
             const SizedBox(height: 50),
@@ -134,44 +135,59 @@ class ProfileAndUserInfo extends StatelessWidget {
           Stack(
             alignment: Alignment.bottomRight,
             children: [
-              CircleAvatar(
-                radius: 50,
-                backgroundImage: imageURL != null
-                    ? NetworkImage(imageURL!) as ImageProvider<Object>
-                    : null,
+              Container(
+                padding: const EdgeInsets.all(5.0),
+                decoration: const BoxDecoration(
+                  color: Color(0xFFE06292),
+                  shape: BoxShape.circle,
+                ),
+                child: CircleAvatar(
+                  radius: 88,
+                  backgroundImage:
+                      imageURL != null ? NetworkImage(imageURL!) : null,
+                  backgroundColor: imageURL != null
+                      ? null
+                      : const Color.fromARGB(255, 0, 0, 0),
+                ),
               ),
-              SizedBox(
-                width: 35,
-                height: 35,
-                child: FloatingActionButton(
-                  onPressed: pickImage,
-                  backgroundColor: const Color.fromARGB(255, 64, 48, 48),
-                  child: const Icon(Icons.edit, size: 18),
+              Positioned(
+                bottom: 0,
+                right: 0,
+                child: GestureDetector(
+                  onTap: () => pickImage!(),
+                  child: Container(
+                    width: 30,
+                    height: 30,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFE06292),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.add,
+                      size: 30,
+                      color: Color.fromARGB(255, 255, 255, 255),
+                    ),
+                  ),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 20),
-          Text(
-            userInfo != null ? userInfo!['nickName'] : '',
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          Text(
-            userInfo != null ? userInfo!['message'] : '',
-            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
-          ),
-          const SizedBox(height: 10),
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const MyFeedPage(nickname: '')),
-              );
-            },
-            child: const Text(
-              '내 피드',
-              style: TextStyle(fontSize: 12, color: Colors.grey),
+          Container(
+            padding: const EdgeInsets.only(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: userInfo != null
+                  ? [
+                      Text("${userInfo!['nickname']}",
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 40)),
+                      Text(
+                          "${userInfo!['name']} (${userInfo!['age'].toString()}) ${userInfo!['job']}"),
+                    ]
+                  : [
+                      const Text("정보를 가져오는 중..."),
+                    ],
             ),
           ),
         ],
@@ -187,30 +203,56 @@ class ActionButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: InkWell(
-            onTap: () {
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color.fromARGB(255, 0, 0, 0),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ),
+            onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const FriendList()),
+                MaterialPageRoute(
+                  builder: (context) => MyFeedPage(
+                    nickname: userInfo!['nickname'],
+                  ),
+                ),
               );
             },
-            child: const Column(
-              children: [
-                Icon(
-                  Icons.person,
-                  size: 35,
+            child: const Text(
+              '내 피드 보러가기',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ),
+        const SizedBox(height: 5),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color.fromARGB(255, 0, 0, 0),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const FriendList(),
                 ),
-                SizedBox(height: 5),
-                Text(
-                  '친구',
-                  style: TextStyle(fontSize: 12, color: Colors.grey),
-                ),
-              ],
+              );
+            },
+            child: const Text(
+              '친구목록 보기',
+              style: TextStyle(color: Colors.white),
             ),
           ),
         ),

@@ -46,78 +46,99 @@ class FeedPage extends StatelessWidget {
             );
           }
 
-          return ListView.builder(
-            itemCount: selectedFriends.length,
-            itemBuilder: (context, index) {
-              String friend = selectedFriends[index];
-              String friendNickname = extractNickname(friend);
+          return Column(
+            children: [
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 8.0),
+                child: Center(
+                  child: Text(
+                    "Feed 보러가기",
+                    style: TextStyle(
+                      fontSize: 40,
+                      color: Color.fromARGB(255, 0, 0, 0),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: selectedFriends.length,
+                  itemBuilder: (context, index) {
+                    String friend = selectedFriends[index];
+                    String friendNickname = extractNickname(friend);
 
-              return FutureBuilder<QuerySnapshot>(
-                future: FirebaseFirestore.instance
-                    .collection('users')
-                    .where('nickname', isEqualTo: friendNickname)
-                    .get(),
-                builder: (BuildContext context,
-                    AsyncSnapshot<QuerySnapshot> snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
-                      Map<String, dynamic> data =
-                          snapshot.data!.docs[0].data() as Map<String, dynamic>;
+                    return FutureBuilder<QuerySnapshot>(
+                      future: FirebaseFirestore.instance
+                          .collection('users')
+                          .where('nickname', isEqualTo: friendNickname)
+                          .get(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<QuerySnapshot> snapshot) {
+                        if (snapshot.connectionState == ConnectionState.done) {
+                          if (snapshot.hasData &&
+                              snapshot.data!.docs.isNotEmpty) {
+                            Map<String, dynamic> data = snapshot.data!.docs[0]
+                                .data() as Map<String, dynamic>;
 
-                      return Column(
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      MyFeedPage(nickname: friendNickname),
+                            return Column(
+                              children: [
+                                InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => MyFeedPage(
+                                            nickname: friendNickname),
+                                      ),
+                                    );
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 15.0),
+                                    child: Row(
+                                      children: [
+                                        const SizedBox(width: 50),
+                                        CircleAvatar(
+                                          backgroundImage:
+                                              NetworkImage(data['imageURL']),
+                                          radius: 40,
+                                        ),
+                                        const SizedBox(width: 10),
+                                        Text(
+                                          friendNickname,
+                                          style: const TextStyle(fontSize: 40),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
-                              );
-                            },
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 15.0),
-                              child: Row(
-                                children: [
-                                  const SizedBox(width: 50),
-                                  CircleAvatar(
-                                    backgroundImage:
-                                        NetworkImage(data['imageURL']),
-                                    radius: 20,
+                                if (index != selectedFriends.length - 1)
+                                  const Divider(
+                                    color: Color.fromARGB(255, 105, 86, 86),
+                                    height: 1,
+                                    thickness: 1,
+                                    indent: 20,
+                                    endIndent: 20,
                                   ),
-                                  const SizedBox(width: 10),
-                                  Text(
-                                    friendNickname,
-                                    style: const TextStyle(fontSize: 20),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          if (index != selectedFriends.length - 1)
-                            const Divider(
-                              color: Color.fromARGB(255, 105, 86, 86),
-                              height: 1,
-                              thickness: 1,
-                              indent: 20,
-                              endIndent: 20,
-                            ),
-                        ],
-                      );
-                    } else {
-                      return const ListTile(
-                        leading: CircleAvatar(),
-                        title: Text('User not found'),
-                      );
-                    }
-                  } else {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                },
-              );
-            },
+                              ],
+                            );
+                          } else {
+                            return const ListTile(
+                              leading: CircleAvatar(),
+                              title: Text('User not found'),
+                            );
+                          }
+                        } else {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        }
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
           );
         },
       ),

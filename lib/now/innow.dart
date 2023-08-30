@@ -71,35 +71,6 @@ class _InNowPageState extends State<InNow> {
     }
   }
 
-  void _showDeleteConfirmationDialog(int index) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('정말 삭제하시겠습니까?'),
-          actions: [
-            TextButton(
-              onPressed: () async {
-                Navigator.of(context).pop();
-                final userData = Provider.of<UserData>(context, listen: false);
-                userData.allUsersData.removeAt(index);
-                await userData.saveToFirestore();
-                setState(() {});
-              },
-              child: const Text('예'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('아니요'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   void _showCallDialog() {
     showDialog(
       context: context,
@@ -208,9 +179,15 @@ class _InNowPageState extends State<InNow> {
                                   ),
                                   child: Column(
                                     children: <Widget>[
-                                      Text(
-                                        "멤버: ${friends.join(', ')}",
-                                        textAlign: TextAlign.center,
+                                      Column(
+                                        children: [
+                                          const Text('멤버'),
+                                          const SizedBox(height: 10), // 간격 추가
+
+                                          ...friends
+                                              .map((friend) => Text(friend))
+                                              .toList(),
+                                        ],
                                       ),
                                       if (si.isNotEmpty ||
                                           gu.isNotEmpty ||
@@ -264,18 +241,6 @@ class _InNowPageState extends State<InNow> {
                                 ),
                               ),
                             ),
-                            if (isCurrentUserData) ...[
-                              Positioned(
-                                right: 0,
-                                top: 0,
-                                child: IconButton(
-                                  icon: const Icon(Icons.close),
-                                  onPressed: () {
-                                    _showDeleteConfirmationDialog(index);
-                                  },
-                                ),
-                              ),
-                            ],
                           ],
                         ),
                       );

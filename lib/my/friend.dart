@@ -119,15 +119,13 @@ class _FriendListState extends State<FriendList> {
                   });
                 },
               ),
-              const Divider(
-                color: Color.fromARGB(255, 82, 82, 82),
-              ),
+              const Divider(color: Color.fromARGB(255, 61, 61, 61)),
             ],
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
                 stream: _firestore
                     .collection('users')
-                    .doc(_auth.currentUser?.uid)
+                    .doc(_auth.currentUser!.uid)
                     .collection('friends')
                     .snapshots(),
                 builder: (context, snapshot) {
@@ -139,14 +137,13 @@ class _FriendListState extends State<FriendList> {
                   List<Widget> friendWidgets = [];
 
                   for (int i = 0; i < friends.length; i++) {
-                    friendWidgets.add(_buildFriendItem(friends[i], i));
+                    friendWidgets.add(_buildFriendItem(friends[i]));
 
-                    if (i != friends.length - 1) {
+                    // Add divider between friend entries except for the last one
+                    if (i < friends.length - 1) {
                       friendWidgets.add(const Divider(
-                        color: Color.fromARGB(255, 82, 82, 82),
-                      ));
+                          color: Color.fromARGB(255, 61, 61, 61)));
                     }
-                    friendWidgets.add(const SizedBox(height: 10));
                   }
 
                   return ListView(children: friendWidgets);
@@ -163,7 +160,7 @@ class _FriendListState extends State<FriendList> {
     );
   }
 
-  ListTile _buildFriendItem(QueryDocumentSnapshot doc, int index) {
+  ListTile _buildFriendItem(QueryDocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
 
     return ListTile(
@@ -179,26 +176,25 @@ class _FriendListState extends State<FriendList> {
       onTap: () {
         _showUserInfoDialog(context, data);
       },
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          IconButton(
-            icon: const Icon(Icons.delete),
-            onPressed: () async {
-              await _firestore
-                  .collection('users')
-                  .doc(_auth.currentUser?.uid)
-                  .collection('friends')
-                  .doc(doc.id)
-                  .delete();
-            },
-          ),
-        ],
+      trailing: IconButton(
+        icon: const Icon(Icons.delete),
+        onPressed: () async {
+          await _firestore
+              .collection('users')
+              .doc(_auth.currentUser!.uid)
+              .collection('friends')
+              .doc(doc.id)
+              .delete();
+        },
       ),
     );
   }
 
+  BuildContext? _addFriendDialogContext;
+
   Future<void> _showAddFriendDialog(BuildContext context) async {
+    _addFriendDialogContext = context; // Store the parent context
+
     return showDialog(
       context: context,
       builder: (context) {
@@ -215,17 +211,31 @@ class _FriendListState extends State<FriendList> {
                     .where('nickname', isEqualTo: nickname)
                     .get();
 
-                // ignore: use_build_context_synchronously
-                Navigator.pop(context);
+                Navigator.pop(
+                    _addFriendDialogContext!); // Close the current dialog
 
                 if (snapshot.docs.isNotEmpty) {
                   final user = snapshot.docs.first;
                   final userData = user.data() as Map<String, dynamic>;
-                  // ignore: use_build_context_synchronously
-                  _showConfirmFriendDialog(context, userData);
+                  final existingFriend = await _firestore
+                      .collection('users')
+                      .doc(_auth.currentUser!.uid)
+                      .collection('friends')
+                      .where('nickname', isEqualTo: nickname)
+                      .get();
+
+                  if (existingFriend.docs.isNotEmpty) {
+                    ScaffoldMessenger.of(_addFriendDialogContext!).showSnackBar(
+                      const SnackBar(
+                        content: Text('이미 등록된 친구입니다.'),
+                      ),
+                    );
+                  } else {
+                    _showConfirmFriendDialog(
+                        _addFriendDialogContext!, userData);
+                  }
                 } else {
-                  // ignore: use_build_context_synchronously
-                  ScaffoldMessenger.of(context).showSnackBar(
+                  ScaffoldMessenger.of(_addFriendDialogContext!).showSnackBar(
                     const SnackBar(
                       content: Text('해당 닉네임의 사용자를 찾을 수 없습니다.'),
                     ),
@@ -265,7 +275,10 @@ class _FriendListState extends State<FriendList> {
                       .collection('users')
                       .doc(user.uid)
                       .collection('friends')
-                      .add(userData);
+                      .add({
+                    ...userData,
+                    'timestamp': FieldValue.serverTimestamp(),
+                  });
                   // ignore: use_build_context_synchronously
                   Navigator.pop(context);
                 }

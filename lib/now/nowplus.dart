@@ -110,73 +110,76 @@ class _NowPlusPageState extends State<NowPlusPage> {
 
   void _showFriendPicker(int index) {
     showModalBottomSheet(
-        context: context,
-        builder: (BuildContext context) {
-          return SizedBox(
-            height: MediaQuery.of(context).size.height * 0.5,
-            child: Column(
-              children: [
-                StreamBuilder<DocumentSnapshot>(
+      context: context,
+      builder: (BuildContext context) {
+        return SizedBox(
+          height: MediaQuery.of(context).size.height * 0.5,
+          child: Column(
+            children: [
+              StreamBuilder<DocumentSnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(FirebaseAuth.instance.currentUser?.uid)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  final userData =
+                      snapshot.data!.data() as Map<String, dynamic>;
+                  final userNickname = userData['nickname'];
+                  final userAge = userData['age'];
+                  final userJob = userData['job'];
+
+                  return ListTile(
+                    title: Text('$userNickname ($userAge, $userJob)'),
+                    onTap: () {
+                      _selectFriend(
+                          index, '$userNickname ($userAge, $userJob)');
+                    },
+                  );
+                },
+              ),
+              Expanded(
+                child: StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestore.instance
                       .collection('users')
                       .doc(FirebaseAuth.instance.currentUser?.uid)
+                      .collection('friends')
                       .snapshots(),
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {
                       return const Center(child: CircularProgressIndicator());
                     }
 
-                    final userData =
-                        snapshot.data!.data() as Map<String, dynamic>;
-                    final userNickname = userData['nickname'];
-                    final userAge = userData['age'];
-                    final userJob = userData['job'];
+                    final friends = snapshot.data!.docs;
+                    return ListView.builder(
+                      itemCount: friends.length,
+                      itemBuilder: (context, position) {
+                        final friendData =
+                            friends[position].data() as Map<String, dynamic>;
 
-                    return ListTile(
-                      title: Text('$userNickname ($userAge, $userJob)'),
-                      onTap: () {
-                        _selectFriend(
-                            index, '$userNickname ($userAge, $userJob)');
+                        final nickname = friendData['nickname'];
+                        final age = friendData['age'];
+                        final job = friendData['job'];
+
+                        return ListTile(
+                          title: Text('$nickname ($age, $job)'),
+                          onTap: () {
+                            _selectFriend(index, '$nickname ($age, $job)');
+                          },
+                        );
                       },
                     );
                   },
                 ),
-                Expanded(
-                  child: StreamBuilder<QuerySnapshot>(
-                    stream: FirebaseFirestore.instance
-                        .collection('friends')
-                        .snapshots(),
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-
-                      final friends = snapshot.data!.docs;
-                      return ListView.builder(
-                        itemCount: friends.length,
-                        itemBuilder: (context, position) {
-                          final friendData =
-                              friends[position].data() as Map<String, dynamic>;
-
-                          final nickname = friendData['nickname'];
-                          final age = friendData['age'];
-                          final job = friendData['job'];
-
-                          return ListTile(
-                            title: Text('$nickname ($age, $job)'),
-                            onTap: () {
-                              _selectFriend(index, '$nickname ($age, $job)');
-                            },
-                          );
-                        },
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-          );
-        });
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   void _selectFriend(int index, String friendName) {

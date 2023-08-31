@@ -5,7 +5,6 @@ import 'package:meet/now/nowplus.dart';
 import 'package:logger/logger.dart';
 import 'package:meet/now/feed.dart';
 import 'package:provider/provider.dart';
-import 'package:meet/now/find.dart';
 
 var logger = Logger();
 
@@ -255,20 +254,6 @@ class _InNowPageState extends State<InNow> {
           floatingActionButton: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              FloatingActionButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const FindPage(),
-                    ),
-                  );
-                },
-                backgroundColor: const Color.fromARGB(255, 0, 0, 0),
-                child: const Icon(Icons.search,
-                    color: Color.fromARGB(255, 255, 255, 255)),
-              ),
-              const SizedBox(width: 16),
               FloatingActionButton(
                 onPressed: () async {
                   final result = await Navigator.push(

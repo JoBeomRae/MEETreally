@@ -154,7 +154,9 @@ class _FriendListState extends State<FriendList> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () => _showAddFriendDialog(context),
+          // ignore: sort_child_properties_last
           child: const Icon(Icons.add),
+          backgroundColor: Colors.black, // 추가된 속성
         ),
       ),
     );

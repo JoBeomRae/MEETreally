@@ -17,12 +17,49 @@ class _FindPageState extends State<FindPage> {
   bool _enableSubmitButton = false;
 
   Map<String, Map<String, List<String>>> locations = {
-    '서울특별시': {
-      '종로구': ['청운동', '효자동', '사직동'],
-      '중구': ['을지로동', '명동', '필동'],
+    '대구광역시': {
+      '중구': ['동인동', '삼덕동', '성내동', '대신동', '남산동', '대봉동'],
+      '동구': [
+        '신암동',
+        '신천동',
+        '효목동',
+        '도평동',
+        '불로·동무동',
+        '지저동',
+        '동촌동',
+        '방촌동',
+        '해안동',
+        '공산동',
+        '안심동',
+        '혁신동'
+      ],
+      '서구': ['비산동', '내당동', '평리동', '상중이동', '원대동'],
+      '남구': ['이천동', '봉덕동', '대명동'],
+      '북구': ['고성동', '칠성동', '침산동', '노원동', '산격동', '복현동', '대현동', '검단동'],
+      '수성구': ['범어동', '만촌동', '수성가동', '황금동', '중동', '상동', '두산동', '지산동', '범물동'],
+      '달서구': [
+        '성당동',
+        '두류동',
+        '감상동',
+        '죽전동',
+        '장기동',
+        '용산동',
+        '이곡동',
+        '신당동',
+        '본리동',
+        '본동',
+        '월성동',
+        '진천동',
+        '유천동',
+        '상인동',
+        '도원동',
+        '송현동'
+      ],
+      '달성군': ['동'],
+      '군위군': ['동'],
     },
     '부산광역시': {
-      '읍부': ['동1', '동2'],
+      '읍부': ['동1']
     },
   };
 
@@ -91,13 +128,14 @@ class _FindPageState extends State<FindPage> {
                   }).toList(),
                   onChanged: (String? newValue) {
                     setState(() {
-                      selectedSi = newValue;
-                      _siController.text = newValue!;
-                      selectedGuList = locations[newValue]?.keys.toList();
-                      selectedGu = null;
-                      _guController.text = '';
+                      selectedGu = newValue;
+                      _guController.text = newValue!;
+                      selectedDongList = locations[selectedSi]?[newValue];
+                      selectedDong = null; // 동 선택 초기화
                       _checkInputValid(); // 변경사항이 있으면 버튼 활성화 여부 검사
                     });
+                    selectedDongList = null; // 이 부분 추가
+                    selectedDong = null; // 동 선택 초기화
                   },
                   hint: const Text('시를 선택해주세요.(필수)'),
                 ),
